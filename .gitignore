@@ -1,0 +1,12 @@
+# Quartus
+db/
+incremental_db/
+output_files/
+*.qpf
+*.rpt
+*.qsf
+*.bak
+
+# QuestaSim FPGA starter edition
+simulation/
+
