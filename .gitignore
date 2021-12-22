@@ -10,3 +10,5 @@ output_files/
 # QuestaSim FPGA starter edition
 simulation/
 
+# TCL script
+*.tcl
