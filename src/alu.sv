@@ -8,6 +8,7 @@
  */
 
 `include "include/alu_if.vh"
+`include "include/rv32ima_pkg.vh"
 
 module alu (
     alu_if.alu _if

@@ -1,11 +1,14 @@
 /*
-File name:	rv32ima_pkg.vh
-Created:	12/22/2021
-Author:	Weili An
-Email:	an108@purdue.edu
-Version:	1.0 Initial Design Entry
-Description:	Types for RV32IMA implementation, based on riscv-opcodes repo
+ * File name:	rv32ima_pkg.vh
+ * Created:	12/22/2021
+ * Author:	Weili An
+ * Email:	an108@purdue.edu
+ * Version:	1.0 Initial Design Entry
+ * Description:	Types for RV32IMA implementation, based on riscv-opcodes repo
 */
+
+`ifndef __RV32IMA_PKG_VH__
+`define __RV32IMA_PKG_VH__
 
 package rv32ima_pkg;
     // Instruction field bit width
@@ -21,6 +24,7 @@ package rv32ima_pkg;
     localparam ALUOP_W = 4;
 
     typedef logic [REG_W - 1:0] reg_t;
+    typedef logic [BIT_WIDTH - 1:0] word_t;
 
     typedef enum logic [OP_W - 1:0] { 
         LOAD        = 7'b0000011,
@@ -100,7 +104,7 @@ package rv32ima_pkg;
         ALU_XOR,  ALU_SLL, ALU_SRL, 
         ALU_SRA,  ALU_MUL, ALU_DIV, 
         ALU_REM 
-    } ALUOP_t;
+    } aluop_t;
 
     // Instruction type struct definition
     // R-type
@@ -556,3 +560,5 @@ package rv32ima_pkg;
     localparam logic [11:0] CSR_MHPMCOUNTER30H = 12'hb9e;
     localparam logic [11:0] CSR_MHPMCOUNTER31H = 12'hb9f;
 endpackage
+
+`endif // __RV32IMA_PKG_VH__
