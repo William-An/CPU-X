@@ -7,8 +7,8 @@
  * Description:	ALU for the RV32IMA CPU
  */
 
-`include "include/alu_if.vh"
-`include "include/rv32ima_pkg.vh"
+`include "include/alu_if.svh"
+`include "include/rv32ima_pkg.svh"
 
 module alu (
     alu_if.alu _if

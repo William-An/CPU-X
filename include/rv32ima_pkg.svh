@@ -1,5 +1,5 @@
 /*
- * File name:	rv32ima_pkg.vh
+ * File name:	rv32ima_pkg.svh
  * Created:	12/22/2021
  * Author:	Weili An
  * Email:	an108@purdue.edu

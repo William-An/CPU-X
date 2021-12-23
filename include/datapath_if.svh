@@ -10,7 +10,7 @@
 `ifndef __DATAPATH_IF_VH__
 `define __DATAPATH_IF_VH__
 
-`include "rv32ima_pkg.vh"
+`include "rv32ima_pkg.svh"
 
 interface datapath_if;
     import rv32ima_pkg::*;

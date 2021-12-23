@@ -9,9 +9,11 @@
 
 `timescale 1ns / 100ps
 
-`include "include/rv32ima_pkg.vh"
-`include "include/alu_if.vh"
-`include "include/regfile_if.vh"
+`include "include/rv32ima_pkg.svh"
+`include "include/alu_if.svh"
+`include "include/regfile_if.svh"
+
+import rv32ima_pkg::*;
 
 module system
 (
@@ -25,7 +27,6 @@ module system
 	input aluop_t op,
 	output word_t out
 );
-	import rv32ima_pkg::*;
 
 	// Testing synthesis size
 	alu_if aif0();

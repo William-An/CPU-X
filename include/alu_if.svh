@@ -10,7 +10,7 @@
 `ifndef __ALU_IF_VH__
 `define __ALU_IF_VH__
 
-`include "rv32ima_pkg.vh"
+`include "rv32ima_pkg.svh"
 
 interface alu_if;
     import rv32ima_pkg::*;

@@ -9,6 +9,11 @@ output_files/
 
 # QuestaSim FPGA starter edition
 simulation/
+_info
+*.qdb
+*.qpg
+*.qtl
+_vmake
 
 # TCL script
 *.tcl

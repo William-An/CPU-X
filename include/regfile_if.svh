@@ -10,7 +10,7 @@
 `ifndef __REGFILE_IF_VH__
 `define __REGFILE_IF_VH__
 
-`include "rv32ima_pkg.vh"
+`include "rv32ima_pkg.svh"
 
 interface regfile_if (input clk, input nrst);
     import rv32ima_pkg::*;
