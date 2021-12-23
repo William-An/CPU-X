@@ -23,7 +23,7 @@ interface regfile_if (input clk, input nrst);
     word_t  rdat2;
     word_t  wdat;
 
-    modport regfile ( * 
+    modport regfile (
         input rsel1, rsel2, wsel, wen, wdat, clk, nrst,
         output rdat1, rdat2
     );

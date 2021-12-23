@@ -16,6 +16,7 @@ package rv32ima_pkg;
     localparam OP_W = 7;
     localparam REG_W = 5;
     localparam FUNCT3_W = 3;
+    localparam LDST_WIDTH_W = FUNCT3_W;
     localparam FUNCT5_W = 5;
     localparam FUNCT7_W = 7;
     localparam BIT_WIDTH = 32;
@@ -55,12 +56,12 @@ package rv32ima_pkg;
     } funct3_t;
 
     // Load and store width funct3
-    typedef enum logic [FUNCT3_W - 1:0] { 
+    typedef enum logic [LDST_WIDTH_W - 1:0] { 
         LDST_BYTE  = 3'b000,
-        LDST_HALF  = 3'b001,
-        LDST_WORD  = 3'b010,
-        LDST_UBYTE = 3'b100,
-        LDST_UHALF = 3'b101
+        LDST_HALF  = 3'b001,    // Signed extend byte for load
+        LDST_WORD  = 3'b010,    // Signed extend half word for load
+        LDST_UBYTE = 3'b100,    // Unsigned extend byte for load
+        LDST_UHALF = 3'b101     // Unsigned extend half word for load
     } ldst_width_t;
 
     // B-type instruction funct3 enums
