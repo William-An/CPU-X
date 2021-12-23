@@ -27,6 +27,16 @@ package rv32ima_pkg;
     typedef logic [REG_W - 1:0] reg_t;
     typedef logic [BIT_WIDTH - 1:0] word_t;
 
+    // TODO Extend and implement hardware counters for inst count?
+    typedef enum logic [2:0] { 
+        RTYPE,
+        ITYPE,
+        STYPE,
+        BTYPE,
+        UTYPE,
+        JTYPE
+    } inst_t;
+
     typedef enum logic [OP_W - 1:0] { 
         LOAD        = 7'b0000011,
         MISC_MEM    = 7'b0001111,
