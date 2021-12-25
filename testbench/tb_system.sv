@@ -1,11 +1,16 @@
 `timescale 1ns/1ns
+
+`include "rv32ima_pkg.svh"
+
 module tb_system;
+    import rv32ima_pkg::*;
 	
     localparam CLK_PERIOD = 10;
     logic tb_clk;
     logic tb_nrst;
+    word_t tb_data;
 
-    system dut(tb_clk, tb_nrst);
+    system dut(tb_clk, tb_nrst, tb_data);
 
     always #CLK_PERIOD tb_clk = ~tb_clk;
 

@@ -52,11 +52,11 @@ module decoder (
         casez (r_inst.opcode)
             LOAD: begin 
                 // rd = mem[r1 + signext(imm)]
-                _if.alu_cmd.alu_insel = _if.alu_cmd.ALU_R2I;
+                _if.alu_cmd.alu_insel = ALU_R2I;
                 _if.alu_cmd.aluop     = ALU_ADD;
 
                 _if.rf_cmd.wen = 1'b1;
-                _if.rf_cmd.wdat_sel   = _if.rf_cmd.LOAD_OUT;
+                _if.rf_cmd.wdat_sel   = LOAD_OUT;
 
                 _if.dmem_cmd.dmem_wen = 1'b0;
                 _if.dmem_cmd.dmem_ren = 1'b1;
@@ -74,11 +74,11 @@ module decoder (
 
             OP_IMM: begin 
                 // rd = r1 + signext(imm)
-                _if.alu_cmd.alu_insel = _if.alu_cmd.ALU_R2I;
+                _if.alu_cmd.alu_insel = ALU_R2I;
                 _if.alu_cmd.aluop     = aluop_t'({1'b0, i_inst[ALTERN_BIT + FUNCT7_START], i_inst.funct3});
 
                 _if.rf_cmd.wen      = 1'b1;
-                _if.rf_cmd.wdat_sel = _if.rf_cmd.ALU_OUT;
+                _if.rf_cmd.wdat_sel = ALU_OUT;
 
                 _if.inst_type = ITYPE;
                 _if.imm32 = { {20{inst_msb}}, i_inst.imm };
@@ -86,11 +86,11 @@ module decoder (
 
             AUIPC: begin 
                 // rd = imm << 20 + PC
-                _if.alu_cmd.alu_insel = _if.alu_cmd.ALU_PCI;
+                _if.alu_cmd.alu_insel = ALU_PCI;
                 _if.alu_cmd.aluop     = ALU_ADD;
 
                 _if.rf_cmd.wen      = 1'b1;
-                _if.rf_cmd.wdat_sel = _if.rf_cmd.ALU_OUT;
+                _if.rf_cmd.wdat_sel = ALU_OUT;
 
                 _if.inst_type = UTYPE;
                 _if.imm32 = { u_inst.imm_31_12, {12{1'b0}} };
@@ -98,7 +98,7 @@ module decoder (
 
             STORE: begin 
                 // mem[r1 + offset] = r2
-                _if.alu_cmd.alu_insel = _if.alu_cmd.ALU_R2I;
+                _if.alu_cmd.alu_insel = ALU_R2I;
                 _if.alu_cmd.aluop     = ALU_ADD;
 
                 _if.rf_cmd.wen = 1'b0;
@@ -119,11 +119,11 @@ module decoder (
 
             OP: begin 
                 // rd = r1 + r2
-                _if.alu_cmd.alu_insel = _if.alu_cmd.ALU_R2R;
+                _if.alu_cmd.alu_insel = ALU_R2R;
                 _if.alu_cmd.aluop     = aluop_t'({r_inst.funct7[MEXT_BIT], r_inst.funct7[ALTERN_BIT], r_inst.funct3});
 
                 _if.rf_cmd.wen = 1'b1;
-                _if.rf_cmd.wdat_sel   = _if.rf_cmd.ALU_OUT;
+                _if.rf_cmd.wdat_sel   = ALU_OUT;
 
                 _if.dmem_cmd.dmem_wen = 1'b0;
                 _if.dmem_cmd.dmem_ren = 1'b0;
@@ -133,12 +133,12 @@ module decoder (
 
             LUI: begin 
                 // rd = imm << 12
-                _if.alu_cmd.alu_insel = _if.alu_cmd.ALU_R2I;
+                _if.alu_cmd.alu_insel = ALU_R2I;
                 _if.alu_cmd.aluop     = ALU_ADD;
 
                 // Fix r1 to r0
                 _if.rf_cmd.wen      = 1'b1;
-                _if.rf_cmd.wdat_sel = _if.rf_cmd.ALU_OUT;
+                _if.rf_cmd.wdat_sel = ALU_OUT;
                 _if.rf_cmd.rs1      = 5'b0;
 
                 _if.inst_type = UTYPE;
@@ -152,7 +152,7 @@ module decoder (
 
             BRANCH: begin 
                 // branch to PC + imm if r1 cond r2
-                _if.alu_cmd.alu_insel = _if.alu_cmd.ALU_R2R;
+                _if.alu_cmd.alu_insel = ALU_R2R;
                 // Select ALU op for comparsion
                 casez (b_inst.funct3)
                     BEQ,
@@ -180,11 +180,11 @@ module decoder (
 
             JALR: begin 
                 // jump to rs1 + Offset, rd = PC + 4
-                _if.alu_cmd.alu_insel = _if.alu_cmd.ALU_R2I;
+                _if.alu_cmd.alu_insel = ALU_R2I;
                 _if.alu_cmd.aluop     = ALU_ADD;
 
                 _if.rf_cmd.wen = 1'b1;
-                _if.rf_cmd.wdat_sel   = _if.rf_cmd.NPC;
+                _if.rf_cmd.wdat_sel   = NPC;
 
                 _if.dmem_cmd.dmem_wen = 1'b0;
                 _if.dmem_cmd.dmem_ren = 1'b0;
@@ -199,11 +199,11 @@ module decoder (
 
             JAL: begin 
                 // jump to PC + Offset, rd = PC + 4
-                _if.alu_cmd.alu_insel = _if.alu_cmd.ALU_PCI;
+                _if.alu_cmd.alu_insel = ALU_PCI;
                 _if.alu_cmd.aluop     = ALU_ADD;
 
                 _if.rf_cmd.wen = 1'b1;
-                _if.rf_cmd.wdat_sel   = _if.rf_cmd.NPC;
+                _if.rf_cmd.wdat_sel   = NPC;
 
                 _if.dmem_cmd.dmem_wen = 1'b0;
                 _if.dmem_cmd.dmem_ren = 1'b0;
@@ -225,11 +225,11 @@ module decoder (
                 // TODO Unrecognized opcode, might need to raise excception
                 // Right now just treated as NOP
                 // r0 = r0 + 0
-                _if.alu_cmd.alu_insel = _if.alu_cmd.ALU_R2I;
+                _if.alu_cmd.alu_insel = ALU_R2I;
                 _if.alu_cmd.aluop     = ALU_ADD;
 
                 _if.rf_cmd.wen      = 1'b1;
-                _if.rf_cmd.wdat_sel = _if.rf_cmd.ALU_OUT;
+                _if.rf_cmd.wdat_sel = ALU_OUT;
 
                 _if.inst_type = ITYPE;
                 _if.imm32 = '0;

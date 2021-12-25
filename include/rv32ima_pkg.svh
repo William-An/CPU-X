@@ -206,6 +206,19 @@ package rv32ima_pkg;
         opcode_t            opcode;
     } j_type;
 
+    typedef enum logic [1:0] {
+        ALU_OUT,
+        LOAD_OUT,
+        NPC         // Next instruction, or PC + 4
+    } wdat_sel_t;
+
+    typedef enum logic [1:0] {
+        ALU_R2R = 2'b00,    // Register to Register
+        ALU_R2I = 2'b10,    // Register to immediate
+        ALU_PCR = 2'b01,    // PC to register
+        ALU_PCI = 2'b11     // PC to immediate
+    } alu_insel_t;
+
     // localparam [31:0] BEQ                = 32'b?????????????????000?????1100011;
     // localparam [31:0] BNE                = 32'b?????????????????001?????1100011;
     // localparam [31:0] BLT                = 32'b?????????????????100?????1100011;

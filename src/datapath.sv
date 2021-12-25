@@ -101,10 +101,10 @@ module datapath
 
 		// Writeback value selecter
 		casez (decif0.rf_cmd.wdat_sel)
-			decif0.rf_cmd.ALU_OUT: 	rfif0.wdat = aif0.out;
-			decif0.rf_cmd.LOAD_OUT: rfif0.wdat = ext_load;
-			decif0.rf_cmd.NPC:		rfif0.wdat = pcif0.pc_add4;
-			default: 			 	rfif0.wdat = aif0.out;
+			ALU_OUT: 	rfif0.wdat = aif0.out;
+			LOAD_OUT:	rfif0.wdat = ext_load;
+			NPC:		rfif0.wdat = pcif0.pc_add4;
+			default:	rfif0.wdat = aif0.out;
 		endcase
 	end
 
