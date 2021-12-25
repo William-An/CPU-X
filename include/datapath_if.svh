@@ -12,7 +12,7 @@
 
 `include "rv32ima_pkg.svh"
 
-interface datapath_if;
+interface datapath_if (input clk, input nrst);
     import rv32ima_pkg::*;
 
     word_t  imem_load;  // Data from imem, inst
@@ -29,12 +29,12 @@ interface datapath_if;
     logic [LDST_WIDTH_W - 1:0] dmem_width;  // LD/ST data width
 
     modport dp (
-        input imem_load, ihit, dhit, dmem_load,
+        input imem_load, ihit, dhit, dmem_load, clk, nrst,
         output imem_addr, imem_ren, dmem_wen, dmem_ren, dmem_store, dmem_addr, dmem_width
     );
 
     modport mem (
-        input imem_addr, imem_ren, dmem_wen, dmem_ren, dmem_store, dmem_addr, dmem_width,
+        input imem_addr, imem_ren, dmem_wen, dmem_ren, dmem_store, dmem_addr, dmem_width, clk, nrst,
         output imem_load, ihit, dhit, dmem_load
     );
 
