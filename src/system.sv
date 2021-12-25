@@ -11,6 +11,7 @@
 
 `include "include/rv32ima_pkg.svh"
 `include "include/datapath_if.svh"
+`include "include/cpu_ram_if.svh"
 
 import rv32ima_pkg::*;
 
@@ -32,7 +33,16 @@ module system
 );
 
 	// Testing synthesis size
-	datapath_if dpif(clk, nrst);
+	logic cpu_clk;
+	always_ff @( posedge clk ) begin : CPU_CLK
+		cpu_clk <= ~cpu_clk;
+	end
+
+	datapath_if dpif(cpu_clk, nrst);
+	cpu_ram_if	crif(
+		.ram_clk(clk),
+		.nrst(nrst)
+	);
 
 	assign iaddr = dpif.imem_addr;
 	assign iren = dpif.imem_ren;
@@ -48,5 +58,8 @@ module system
 	assign dpif.dmem_load = dload;
 
 	datapath dp0(dpif);
+	// TODO: memory controller/arbiter
+	// Onchip ram, for offchip, initialize an offchip mem controller?
+	ram	ram0(crif);
 
 endmodule

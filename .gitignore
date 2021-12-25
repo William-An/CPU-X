@@ -15,5 +15,10 @@ _info
 *.qtl
 _vmake
 
+# QuestaSim 1-port ram IP
+greybox_tmp/
+src/ram_internal.v
+src/ram_internal.qip
+
 # TCL script
 *.tcl
