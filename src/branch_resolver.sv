@@ -20,6 +20,7 @@ module branch_resolver (
         _if.next_addr_en = '0;
 
         if (_if.control_type.is_branch) begin
+            // TODO: Actually do not need the carry, zero, neg, overflow flags other place than this module, might be able to remove them?
             casez ({_if.zero, _if.neg, _if.control_type.branch_type})
                 // Branch taken
                 // Use ALU_SUB

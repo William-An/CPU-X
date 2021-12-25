@@ -31,11 +31,25 @@ module datapath
 	branch_resolver_if brif0();
     word_t ext_load;    // Signed extended load val
 
+	i_type inst, next_inst;
+
+	always_ff @( posedge dpif.clk, negedge dpif.nrst ) begin : INST_REG
+		if (dpif.nrst == 1'b0) begin
+			// Default to NOP
+			inst <= '0;
+			inst.opcode <= OP_IMM;
+		end
+		else
+			inst <= next_inst;
+	end
 
 	always_comb begin: DATAPATH
 		dpif.imem_addr 		= pcif0.next_pc;
 		dpif.imem_ren		= pcif0.next_pc_en;
 		pcif0.inst_ready 	= dpif.ihit;
+
+		if (dpif.ihit)
+			next_inst = dpif.imem_load;
 
 		// Connecting signals to regfile
 		rfif0.rsel1 	= decif0.rf_cmd.rs1;
@@ -44,7 +58,7 @@ module datapath
 		rfif0.wen 	= decif0.rf_cmd.wen;
 
 		// Connecting signals to decoder
-		decif0.inst	= dpif.imem_load;
+		decif0.inst	= inst;
 
 		// Connecting signals to ALU
 		aif0.in1 = decif0.alu_cmd.alu_insel[0] == 1'b0 ? rfif0.rdat1 : pcif0.curr_pc;
