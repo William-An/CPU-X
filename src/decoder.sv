@@ -7,8 +7,8 @@
  * Description:	Decoder implementation
  */
 
-`include "include/decoder_if.svh"
-`include "include/rv32ima_pkg.svh"
+`include "decoder_if.svh"
+`include "rv32ima_pkg.svh"
 
 module decoder (
     decoder_if.decode _if

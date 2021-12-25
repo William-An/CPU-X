@@ -9,9 +9,9 @@
 
 `timescale 1ns / 100ps
 
-`include "include/rv32ima_pkg.svh"
-`include "include/datapath_if.svh"
-`include "include/cpu_ram_if.svh"
+`include "rv32ima_pkg.svh"
+`include "datapath_if.svh"
+`include "cpu_ram_if.svh"
 
 import rv32ima_pkg::*;
 
@@ -19,23 +19,16 @@ module system
 (
 	input clk,
 	input nrst,
-	output word_t iaddr,
-	input word_t idata,
-	input logic ihit,
-	output logic iren,
-	input logic dhit,
-	output logic dren,
-	output logic dwen,
-	output word_t dstore,
-	input word_t dload,
-	output word_t daddr,
-	output logic [LDST_WIDTH_W - 1:0] dwidth
+	output word_t data
 );
 
 	// Testing synthesis size
 	logic cpu_clk;
-	always_ff @( posedge clk ) begin : CPU_CLK
-		cpu_clk <= ~cpu_clk;
+	always_ff @( posedge clk, negedge nrst ) begin : CPU_CLK
+		if (nrst == 1'b0)
+			cpu_clk = 1'b0;
+		else
+			cpu_clk <= ~cpu_clk;
 	end
 
 	datapath_if dpif(cpu_clk, nrst);
@@ -44,21 +37,14 @@ module system
 		.nrst(nrst)
 	);
 
-	assign iaddr = dpif.imem_addr;
-	assign iren = dpif.imem_ren;
-	assign dren = dpif.dmem_ren;
-	assign dwen = dpif.dmem_wen;
-	assign dstore = dpif.dmem_store;
-	assign daddr = dpif.dmem_addr;
-	assign dwidth = dpif.dmem_width;
+	assign data = crif.ram_load;
 
-	assign dpif.imem_load = idata;
-	assign dpif.ihit = ihit;
-	assign dpif.dhit = dhit;
-	assign dpif.dmem_load = dload;
-
+	// Module
 	datapath dp0(dpif);
+	
 	// TODO: memory controller/arbiter
+	memory_controller mc(dpif, crif);
+
 	// Onchip ram, for offchip, initialize an offchip mem controller?
 	ram	ram0(crif);
 

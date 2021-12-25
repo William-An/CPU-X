@@ -7,8 +7,8 @@
  * Description:	Wrapper module with internal ram implementation
  */
 
-`include "include/cpu_ram_if.svh"
-`include "include/rv32ima_pkg.svh"
+`include "cpu_ram_if.svh"
+`include "rv32ima_pkg.svh"
 
 module ram (
     cpu_ram_if.ram _if

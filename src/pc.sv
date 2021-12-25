@@ -7,8 +7,8 @@
  * Description:	PC implementation
  */
 
-`include "include/pc_if.svh"
-`include "include/rv32ima_pkg.svh"
+`include "pc_if.svh"
+`include "rv32ima_pkg.svh"
 
 module pc #(
     PC_INIT = 32'b0

@@ -7,8 +7,8 @@
  * Description:	Register file
  */
 
-`include "include/regfile_if.svh"
-`include "include/rv32ima_pkg.svh"
+`include "regfile_if.svh"
+`include "rv32ima_pkg.svh"
 
 module regfile (
     regfile_if.regfile _if

@@ -7,8 +7,8 @@
  * Description:	Branch resolver, can add predictor help in future
  */
 
-`include "include/branch_resolver_if.svh"
-`include "include/rv32ima_pkg.svh"
+`include "branch_resolver_if.svh"
+`include "rv32ima_pkg.svh"
 
 module branch_resolver (
     branch_resolver_if.br _if

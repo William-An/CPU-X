@@ -21,7 +21,7 @@ interface branch_resolver_if;
     logic   zero;
     logic   neg;
     word_t  next_addr;
-    word_t  next_addr_en;
+    logic   next_addr_en;
     // TODO What if overflow?
 
     modport br (

@@ -9,12 +9,12 @@
 
 `timescale 1ns / 100ps
 
-`include "include/rv32ima_pkg.svh"
-`include "include/alu_if.svh"
-`include "include/regfile_if.svh"
-`include "include/pc_if.svh"
-`include "include/branch_resolver_if.svh"
-`include "include/datapath_if.svh"
+`include "rv32ima_pkg.svh"
+`include "alu_if.svh"
+`include "regfile_if.svh"
+`include "pc_if.svh"
+`include "branch_resolver_if.svh"
+`include "datapath_if.svh"
 
 import rv32ima_pkg::*;
 
