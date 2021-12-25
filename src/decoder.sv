@@ -153,7 +153,16 @@ module decoder (
             BRANCH: begin 
                 // branch to PC + imm if r1 cond r2
                 _if.alu_cmd.alu_insel = _if.alu_cmd.ALU_R2R;
-                _if.alu_cmd.aluop     = ALU_SUB;
+                // Select ALU op for comparsion
+                casez (b_inst.funct3)
+                    BEQ,
+                    BNE: _if.alu_cmd.aluop  = ALU_SUB;
+                    BLT,
+                    BGE: _if.alu_cmd.aluop  = ALU_SLT;
+                    BLTU,
+                    BGEU: _if.alu_cmd.aluop = ALU_SLTU;
+                    default: _if.alu_cmd.aluop  = ALU_SUB;
+                endcase
 
                 _if.rf_cmd.wen = 1'b0;
 

@@ -39,6 +39,7 @@ interface decoder_if;
         } wdat_sel;   // Write back data select
     } rf_cmd;
 
+    // TODO Remove the dmem prefix as already in dmem_cmd struct?
     struct packed {
         logic       dmem_wen;   // Write to dmem enable
         logic       dmem_ren;   // Read from dmem enable
