@@ -22,7 +22,7 @@ package rv32ima_pkg;
     localparam BIT_WIDTH = 32;
     
     // ALU Op bit width
-    localparam ALUOP_W = 4;
+    localparam ALUOP_W = 5;
 
     typedef logic [REG_W - 1:0] reg_t;
     typedef logic [BIT_WIDTH - 1:0] word_t;
@@ -54,6 +54,7 @@ package rv32ima_pkg;
     } opcode_t;
 
     // I-type and R-type instruction funct3 enums
+    localparam FUNCT3_START = 12;
     typedef enum logic [FUNCT3_W - 1:0] { 
         ADD     = 3'b000,   // Same as JALR and SUB (use imm[11:5] for differentiation)
         SLL     = 3'b001,
@@ -84,7 +85,17 @@ package rv32ima_pkg;
         BGEU    = 3'b111
     } bfunct3_t;
 
+    // Control type of the instruction
+    typedef struct packed {
+        logic is_branch;
+        logic is_jump;
+        bfunct3_t branch_type;
+    } bcontrol_t;
+
     // R-type instruction funct7 enums
+    localparam FUNCT7_START = 25;
+    localparam MEXT_BIT     = 0;
+    localparam ALTERN_BIT   = 5;
     typedef enum logic [FUNCT7_W - 1:0] { 
         BASE    = 7'b0000000,
         MEXT    = 7'b0000001,   // RV32M extension
@@ -94,6 +105,7 @@ package rv32ima_pkg;
     // A-extension funct5 enums
     // TODO can use wildcard ? to merge with the funct7 enum?
     // TODO like: AMOADD  = 7'b00000??,
+    localparam FUNCT5_START = 27;
     typedef enum logic [FUNCT5_W - 1:0] {
         AMOADD  = 5'b00000,
         AMOSWAP = 5'b00001,
@@ -108,13 +120,31 @@ package rv32ima_pkg;
         AMOMAXU = 5'b11100
     } funct5_t;
 
-    // ALU Op
+    // ALU Op, aligned with funct3 with the MSB specify alternative function
+    // alu_op[2:0]  = funct3
+    // alu_op[3]    = Alternative function?
+    // alu_op[4]    = M-extension?
     typedef enum logic [ALUOP_W - 1:0] { 
-        ALU_ADD,  ALU_SUB, ALU_SLT, 
-        ALU_SLTU, ALU_AND, ALU_OR,
-        ALU_XOR,  ALU_SLL, ALU_SRL, 
-        ALU_SRA,  ALU_MUL, ALU_DIV, 
-        ALU_REM 
+        ALU_ADD     = 5'b00000,
+        ALU_SUB     = 5'b01000,
+        ALU_SLL     = 5'b00001, 
+        ALU_SLT     = 5'b00010, 
+        ALU_SLTU    = 5'b00011, 
+        ALU_XOR     = 5'b00100,
+        ALU_SRL     = 5'b00101, 
+        ALU_SRA     = 5'b01101, 
+        ALU_OR      = 5'b00110,
+        ALU_AND     = 5'b00111, 
+
+        // M-extension 
+        ALU_MUL     = 5'b10000, 
+        ALU_MULH    = 5'b10001,     // rs1, rs2: signed, return upper bits
+        ALU_MULHSU  = 5'b10010,     // rs1: ssigned, rs2: unsigned
+        ALU_MULHU   = 5'b10011,     // rs1, rs2: unsigned
+        ALU_DIV     = 5'b10100, 
+        ALU_DIVU    = 5'b10101,     // Unsigned division
+        ALU_REM     = 5'b10110,
+        ALU_REMU    = 5'b10111      // Unsigned modulo
     } aluop_t;
 
     // Instruction type struct definition
@@ -153,7 +183,7 @@ package rv32ima_pkg;
         logic [5:0] imm_10_5;
         reg_t       rs2;
         reg_t       rs1;
-        funct3_t    funct3;
+        bfunct3_t   funct3;
         logic [3:0] imm_4_1;
         logic       imm_11;
         opcode_t    opcode;
