@@ -20,14 +20,15 @@ interface cpu_ram_if (input ram_clk, input nrst);
     word_t ram_load;
     logic  ram_ren;
     logic  ram_wen;
+    logic [LDST_WIDTH_W - 1:0] ram_width;
 
     modport cpu (
         input ram_load, 
-        output ram_addr, ram_store, ram_ren, ram_wen
+        output ram_addr, ram_store, ram_ren, ram_wen, ram_width
     );
 
     modport ram (
-        input ram_clk, nrst, ram_addr, ram_store, ram_ren, ram_wen,
+        input ram_clk, nrst, ram_addr, ram_store, ram_ren, ram_wen, ram_width,
         output ram_load 
     );
 

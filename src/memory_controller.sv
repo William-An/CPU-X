@@ -27,6 +27,7 @@ module memory_controller (
         _ramif.ram_store = '0;
         _ramif.ram_ren = 1'b0;
         _ramif.ram_wen = 1'b0;
+        _ramif.ram_width = _dpif.dmem_width;
 
         if (_dpif.dmem_wen == 1'b1) begin
             // Serve ongoing store

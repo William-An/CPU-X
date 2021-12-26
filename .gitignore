@@ -19,6 +19,10 @@ _vmake
 greybox_tmp/
 src/ram_internal.v
 src/ram_internal.qip
+src/ram_internal.cnx
 
 # TCL script
 *.tcl
+
+# Scripts
+scripts/
