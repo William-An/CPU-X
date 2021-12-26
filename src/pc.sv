@@ -11,7 +11,7 @@
 `include "rv32ima_pkg.svh"
 
 module pc #(
-    PC_INIT = 32'b0
+    PC_INIT = -4
 ) (
     pc_if.pc _if
 );
