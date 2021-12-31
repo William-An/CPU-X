@@ -35,3 +35,6 @@ riscv-tests/
 *.riscv
 *.hex
 *.dump
+*.spike
+*.spike_dump
+
