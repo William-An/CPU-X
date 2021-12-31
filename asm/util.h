@@ -116,7 +116,7 @@ TEST_CASE(test_num, x1, exp,                                                \
 );
 
 // Insert nops between src1 and src2 load and op to test if pipeline bypass works
-#define TEST_RR_OP_SRC12_BYPASS(test_num, src1_nops, src2_nops, op, exp, val)   \
+#define TEST_RR_OP_SRC12_BYPASS(test_num, src1_nops, src2_nops, op, exp, val1, val2)   \
 TEST_CASE(test_num, x6, exp,                                                    \
     li x1, val1;                                                                \
     INSERT_NOPS_ ## src1_nops                                                   \
@@ -125,7 +125,7 @@ TEST_CASE(test_num, x6, exp,                                                    
     op x6, x1, x4;                                                              \
 );
 
-#define TEST_RR_OP_SRC21_BYPASS(test_num, src1_nops, src2_nops, op, exp, val)   \
+#define TEST_RR_OP_SRC21_BYPASS(test_num, src1_nops, src2_nops, op, exp, val1, val2)   \
 TEST_CASE(test_num, x6, exp,                                                    \
     li x4, val2;                                                                \
     INSERT_NOPS_ ## src2_nops                                                   \
@@ -134,7 +134,7 @@ TEST_CASE(test_num, x6, exp,                                                    
     op x6, x1, x4;                                                              \
 );
 
-#define TEST_RR_OP_DEST_BYPASS(test_num, num_nops, op, exp, val)            \
+#define TEST_RR_OP_DEST_BYPASS(test_num, num_nops, op, exp, val1, val2)     \
 TEST_CASE(test_num, x6, exp,                                                \
     li x1, val1;                                                            \
     li x4, val2;                                                            \
