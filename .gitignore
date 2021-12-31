@@ -27,8 +27,11 @@ src/ram_internal.cnx
 # Scripts
 scripts/
 
+# VSCode
+.vscode/
+
 # ASM Tests
 riscv-tests/
-meminit.hex
-memcpu.hex
-memfpga.hex
+*.riscv
+*.hex
+*.dump
