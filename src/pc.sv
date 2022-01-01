@@ -21,18 +21,21 @@ module pc #(
 
     always_ff @( posedge _if.clk, negedge _if.nrst ) begin : STATE
         if (_if.nrst == 1'b0) begin
-            _if.curr_pc = PC_INIT;
+            _if.curr_pc <= PC_INIT;
+            _if.next_pc_en <= 1'b0;
         end 
-        else if (_if.inst_ready == 1'b1) begin
-            // Fetch next instruction when the current one is ready and consume by the datapath
-            _if.curr_pc = _if.next_pc;
+        else begin
+            _if.next_pc_en <= 1'b1; // Sync with clk
+            if (_if.inst_ready == 1'b1) begin
+                // Fetch next instruction when the current one is ready and consume by the datapath
+                _if.curr_pc <= _if.next_pc;
+            end
         end
     end
 
     always_comb begin : NEXT_LOGIC
         _if.pc_add4 = _if.curr_pc + 4;
         _if.next_pc = _if.pc_add4;
-        _if.next_pc_en = 1'b1;  // Always fetching
 
         // TODO Glitches?
         if (_if.branch_addr_en == 1'b1)

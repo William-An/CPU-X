@@ -29,29 +29,26 @@ module memory_controller (
         _ramif.ram_wen = 1'b0;
         _ramif.ram_width = _dpif.dmem_width;
 
-        // Access ram only if it is free
-        // for busy, maintaining the same input
-        if (_ramif.ram_state == RAM_FREE || _ramif.ram_state == RAM_ADDR) begin
-            if (_dpif.dmem_wen == 1'b1) begin
-                // Serve ongoing store
-                _ramif.ram_addr = _dpif.dmem_addr;
-                _ramif.ram_store = _dpif.dmem_store;
-                _ramif.ram_wen = 1'b1;
-            end
-            else if (_dpif.dmem_ren == 1'b1) begin
-                // Serve ongoing load
-                _ramif.ram_addr = _dpif.dmem_addr;
-                _ramif.ram_ren = 1'b1;
-            end
-            else if (_dpif.imem_ren == 1'b1) begin
-                // Serve ongoing fetch
-                _ramif.ram_addr = _dpif.imem_addr;
-                _ramif.ram_ren = 1'b1;
-            end
-            else begin
-                _dpif.dhit = 1'b0;
-                _dpif.ihit = 1'b0;
-            end
+        // Access ram
+        if (_dpif.dmem_wen == 1'b1) begin
+            // Serve ongoing store
+            _ramif.ram_addr = _dpif.dmem_addr;
+            _ramif.ram_store = _dpif.dmem_store;
+            _ramif.ram_wen = 1'b1;
+        end
+        else if (_dpif.dmem_ren == 1'b1) begin
+            // Serve ongoing load
+            _ramif.ram_addr = _dpif.dmem_addr;
+            _ramif.ram_ren = 1'b1;
+        end
+        else if (_dpif.imem_ren == 1'b1) begin
+            // Serve ongoing fetch
+            _ramif.ram_addr = _dpif.imem_addr;
+            _ramif.ram_ren = 1'b1;
+        end
+        else begin
+            _dpif.dhit = 1'b0;
+            _dpif.ihit = 1'b0;
         end
 
         // Serving last request

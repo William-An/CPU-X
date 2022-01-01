@@ -19,52 +19,50 @@ module ram #(
     import rv32ima_pkg::*;
 
     logic [3:0] byteen;
-    ram_state_t rstate, next_rstate;
     logic [3:0] lat_count, next_lat_count;
     word_t tmp_data;
-
-    assign _if.ram_state = rstate;
+    logic ram_rdy, n_ram_rdy;
 
     // Simple 
-    always_ff @(posedge _if.ram_clk, negedge _if.nrst) begin: RAM_STATE
+    always_ff @(posedge _if.ram_clk, negedge _if.nrst) begin
         if (_if.nrst == 1'b0) begin
-            rstate <= RAM_FREE;
+            ram_rdy <= '0;
             lat_count <= '0;
         end
         else begin
-            rstate <= next_rstate;
+            ram_rdy <= n_ram_rdy;
             lat_count <= next_lat_count;
         end
     end
 
     always_comb begin: RAM_NEXT
         next_lat_count = lat_count;
-        next_rstate = rstate;
+        n_ram_rdy = 1'b0;
 
         // RAM state logic
-        casez (rstate)
-            RAM_FREE: begin
-                if (_if.ram_wen || _if.ram_ren)
-                    next_rstate = RAM_ADDR;
-            end
-            RAM_ADDR: begin
-                next_lat_count = lat_count + 1;
-                if (_if.ram_wen || _if.ram_ren) begin
-                    if (lat_count >= LAT)
-                        next_rstate = RAM_DATA;
-                    else
-                        next_rstate = RAM_ADDR;
+        
+
+        if (ram_rdy && lat_count >= LAT) begin
+            _if.ram_state = RAM_DATA;
+            n_ram_rdy = 1'b0;
+            next_lat_count = '0;
+        end
+        else begin
+            casez ({_if.ram_wen, _if.ram_ren, _if.nrst})
+                3'b00?: begin
+                    _if.ram_state = RAM_FREE;
                 end
-                else begin
-                    next_rstate = RAM_FREE;
+                3'b101,
+                3'b011: begin
+                    _if.ram_state = RAM_ADDR;
+                    next_lat_count = lat_count + 1;
+                    n_ram_rdy = 1'b1;
                 end
-            end
-            RAM_DATA: begin
-                next_rstate = RAM_ADDR;
-                next_lat_count = 0;
-            end
-            default: next_rstate = RAM_ERROR;
-        endcase
+                default: begin
+                    _if.ram_state = RAM_ERROR;
+                end
+            endcase
+        end
     end
 
     always_comb begin: BYTE_EN_MUX
