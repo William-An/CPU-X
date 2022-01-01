@@ -26,7 +26,7 @@ module system
 	logic cpu_clk;
 	always_ff @( posedge clk, negedge nrst ) begin : CPU_CLK
 		if (nrst == 1'b0)
-			cpu_clk = 1'b0;
+			cpu_clk <= 1'b0;
 		else
 			cpu_clk <= ~cpu_clk;
 	end
@@ -46,6 +46,6 @@ module system
 	memory_controller mc(dpif, crif);
 
 	// Onchip ram, for offchip, initialize an offchip mem controller?
-	ram	#(.REORDER_DATA(1'b1)) ram0(crif);
+	ram	#(.REORDER_DATA(1'b1), .LAT(4'b0)) ram0(crif);
 
 endmodule

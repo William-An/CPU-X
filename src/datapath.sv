@@ -47,13 +47,14 @@ module datapath
 		dpif.imem_addr 		= pcif0.next_pc;
 		dpif.imem_ren		= pcif0.next_pc_en;
 		pcif0.inst_ready 	= dpif.ihit;
+		next_inst			= inst;
 
-		if (dpif.ihit)
+		if (dpif.ihit == 1'b1)
 			next_inst = dpif.imem_load;
 
 		// Connecting signals to regfile
-		rfif0.rsel1 	= decif0.rf_cmd.rs1;
-		rfif0.rsel2 	= decif0.rf_cmd.rs2;
+		rfif0.rsel1 = decif0.rf_cmd.rs1;
+		rfif0.rsel2 = decif0.rf_cmd.rs2;
 		rfif0.wsel 	= decif0.rf_cmd.rd;
 		rfif0.wen 	= decif0.rf_cmd.wen;
 

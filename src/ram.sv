@@ -11,14 +11,61 @@
 `include "rv32ima_pkg.svh"
 
 module ram #(
-    REORDER_DATA = 1'b0
+    REORDER_DATA = 1'b0,
+    LAT = 4'b0
 ) (
     cpu_ram_if.ram _if
 );
     import rv32ima_pkg::*;
 
     logic [3:0] byteen;
+    ram_state_t rstate, next_rstate;
+    logic [3:0] lat_count, next_lat_count;
     word_t tmp_data;
+
+    assign _if.ram_state = rstate;
+
+    // Simple 
+    always_ff @(posedge _if.ram_clk, negedge _if.nrst) begin: RAM_STATE
+        if (_if.nrst == 1'b0) begin
+            rstate <= RAM_FREE;
+            lat_count <= '0;
+        end
+        else begin
+            rstate <= next_rstate;
+            lat_count <= next_lat_count;
+        end
+    end
+
+    always_comb begin: RAM_NEXT
+        next_lat_count = lat_count;
+        next_rstate = rstate;
+
+        // RAM state logic
+        casez (rstate)
+            RAM_FREE: begin
+                if (_if.ram_wen || _if.ram_ren)
+                    next_rstate = RAM_ADDR;
+            end
+            RAM_ADDR: begin
+                next_lat_count = lat_count + 1;
+                if (_if.ram_wen || _if.ram_ren) begin
+                    if (lat_count >= LAT)
+                        next_rstate = RAM_DATA;
+                    else
+                        next_rstate = RAM_ADDR;
+                end
+                else begin
+                    next_rstate = RAM_FREE;
+                end
+            end
+            RAM_DATA: begin
+                next_rstate = RAM_ADDR;
+                next_lat_count = 0;
+            end
+            default: next_rstate = RAM_ERROR;
+        endcase
+    end
 
     always_comb begin: BYTE_EN_MUX
         casez (_if.ram_width[1:0])

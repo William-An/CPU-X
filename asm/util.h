@@ -13,6 +13,9 @@
 // Address to write the final test result, whether is zero (passed)
 // or not (contains the failed test number)
 
+// Value in reg 30, 31 signaling end of program
+#define HALT_VALUE 0xBEEFBEEF
+
 #ifndef SPIKE
     #define RESULT_ADDR 0xAF0
 #else
@@ -180,8 +183,8 @@ dead_loop:                                                                  \
 
 // Write special values to register to signal testbench to halt
 #define HALT_PROCESSOR                                                      \
-    li x30, 0xBEEFBEEF;                                                     \
-    li x31, 0xBEEFBEEF;                                                     
+    li x30, HALT_VALUE;                                                     \
+    li x31, HALT_VALUE;                                                     
 
 
 // TODO Add the trap handler for spike?
