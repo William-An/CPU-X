@@ -32,6 +32,24 @@ module datapath
     word_t ext_load;    // Signed extended load val
 
 	i_type inst, next_inst;
+	logic dREN, dWEN;
+
+	// TODO Fix ST/LD op issue, where iren is not properly overrided
+	always_ff @(posedge dpif.clk, negedge dpif.nrst) begin: CACHED_DEN
+		if (dpif.nrst == 1'b0) begin
+			dREN <= 1'b0;
+			dWEN <= 1'b0;
+		end
+		else begin
+			dREN <= decif0.dmem_cmd.dmem_ren;
+			dWEN <= decif0.dmem_cmd.dmem_wen;
+			// TODO Break with state machine
+			if (dpif.dhit == 1'b1) begin
+				dREN <= 1'b0;
+				dWEN <= 1'b0;
+			end
+		end
+	end
 
 	always_ff @( posedge dpif.clk, negedge dpif.nrst ) begin : INST_REG
 		if (dpif.nrst == 1'b0) begin
@@ -48,6 +66,7 @@ module datapath
 		dpif.imem_ren		= pcif0.next_pc_en;
 		pcif0.inst_ready 	= dpif.ihit;
 		next_inst			= inst;
+		ext_load			= '0;
 
 		if (dpif.ihit == 1'b1)
 			next_inst = dpif.imem_load;
@@ -67,11 +86,12 @@ module datapath
 		aif0.alu_op = decif0.alu_cmd.aluop;
 
 		// Data memory signals
-		dpif.dmem_wen		= decif0.dmem_cmd.dmem_wen;
-		dpif.dmem_ren		= decif0.dmem_cmd.dmem_ren;
+		dpif.dmem_wen		= dWEN;
+		dpif.dmem_ren		= dREN;
 		dpif.dmem_store 	= rfif0.rdat2;
 		dpif.dmem_addr		= aif0.out;
 		dpif.dmem_width 	= decif0.dmem_cmd.dmem_width;
+
 
 		// Branch resolver
 		brif0.branch_addr 	= decif0.imm32 + pcif0.curr_pc;

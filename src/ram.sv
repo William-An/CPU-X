@@ -55,7 +55,7 @@ module ram #(
                 3'b101,
                 3'b011: begin
                     _if.ram_state = RAM_ADDR;
-                    next_lat_count = lat_count + 1;
+                    next_lat_count = lat_count + 4'b1;
                     n_ram_rdy = 1'b1;
                 end
                 default: begin
