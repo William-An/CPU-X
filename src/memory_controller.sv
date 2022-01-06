@@ -29,27 +29,6 @@ module memory_controller (
         _ramif.ram_wen = 1'b0;
         _ramif.ram_width = _dpif.dmem_width;
 
-        // Access ram
-        if (_dpif.dmem_wen == 1'b1) begin
-            // Serve ongoing store
-            _ramif.ram_addr = _dpif.dmem_addr;
-            _ramif.ram_store = _dpif.dmem_store;
-            _ramif.ram_wen = 1'b1;
-        end
-        else if (_dpif.dmem_ren == 1'b1) begin
-            // Serve ongoing load
-            _ramif.ram_addr = _dpif.dmem_addr;
-            _ramif.ram_ren = 1'b1;
-        end
-        else if (_dpif.imem_ren == 1'b1) begin
-            // Serve ongoing fetch
-            _ramif.ram_addr = _dpif.imem_addr;
-            _ramif.ram_ren = 1'b1;
-        end
-        else begin
-            _dpif.dhit = 1'b0;
-            _dpif.ihit = 1'b0;
-        end
 
         // Serving last request
         if (_ramif.ram_state == RAM_DATA) begin
@@ -57,8 +36,10 @@ module memory_controller (
             _ramif.ram_wen = 1'b0;
             _ramif.ram_ren = 1'b0;
 
-            // As we serve data first
-            if (_dpif.dmem_wen | _dpif.dmem_ren) begin
+            if (_dpif.dmem_wen) begin
+                _dpif.dhit = 1'b1;
+            end
+            else if (_dpif.dmem_ren) begin
                 _dpif.dhit = 1'b1;
                 _dpif.dmem_load = _ramif.ram_load;
             end
@@ -67,6 +48,23 @@ module memory_controller (
                 _dpif.imem_load = _ramif.ram_load;
             end
         end
-
+        else begin
+            if (_dpif.dmem_wen == 1'b1) begin
+                // Serve ongoing store
+                _ramif.ram_addr = _dpif.dmem_addr;
+                _ramif.ram_store = _dpif.dmem_store;
+                _ramif.ram_wen = 1'b1;
+            end
+            else if (_dpif.dmem_ren == 1'b1) begin
+                // Serve ongoing load
+                _ramif.ram_addr = _dpif.dmem_addr;
+                _ramif.ram_ren = 1'b1;
+            end
+            else if (_dpif.imem_ren == 1'b1) begin
+                // Serve ongoing fetch
+                _ramif.ram_addr = _dpif.imem_addr;
+                _ramif.ram_ren = 1'b1;
+            end
+        end
     end
 endmodule

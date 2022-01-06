@@ -24,7 +24,7 @@ module tb_system;
         tb_nrst = 1'b1;
         repeat (3) @(posedge tb_clk);
 
-        repeat (100) @(posedge tb_clk);
+        repeat (200) @(posedge tb_clk);
         $stop;
         // TODO Break on if x30 and x31 contains value 0xBEEFBEEF
     end
