@@ -76,7 +76,10 @@ module decoder (
                 // rd = r1 + signext(imm)
                 _if.alu_cmd.alu_insel = ALU_R2I;
                 // TODO Altern bit cannot be used for inst with full imm?
-                _if.alu_cmd.aluop     = aluop_t'({1'b0, i_inst[ALTERN_BIT + FUNCT7_START], i_inst.funct3});
+                if (i_inst.funct3 == SR)
+                    _if.alu_cmd.aluop     = aluop_t'({1'b0, i_inst[ALTERN_BIT + FUNCT7_START], i_inst.funct3});
+                else
+                    _if.alu_cmd.aluop     = aluop_t'({2'b0, i_inst.funct3});
 
                 _if.rf_cmd.wen      = 1'b1;
                 _if.rf_cmd.wdat_sel = ALU_OUT;
