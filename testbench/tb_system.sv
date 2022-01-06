@@ -9,6 +9,7 @@ module tb_system;
     logic tb_clk;
     logic tb_nrst;
     word_t tb_data;
+    int unsigned tb_cycles;
 
     system dut(tb_clk, tb_nrst, tb_data);
 
@@ -17,15 +18,19 @@ module tb_system;
     initial begin
         tb_clk = 1'b0;
         tb_nrst = 1'b1;
+        tb_cycles = 0;
 
         repeat (3) @(posedge tb_clk);
         tb_nrst = 1'b0;
         repeat (3) @(posedge tb_clk);
         tb_nrst = 1'b1;
-        repeat (3) @(posedge tb_clk);
 
-        repeat (200) @(posedge tb_clk);
+        // Break on if x30 and x31 contains value 0xBEEFBEEF
+        while (!(dut.dp0.rf0.rf[30] == 32'hbeefbeef && dut.dp0.rf0.rf[31] == 32'hbeefbeef)) begin
+            @(posedge tb_clk);
+            tb_cycles++;
+        end
         $stop;
-        // TODO Break on if x30 and x31 contains value 0xBEEFBEEF
+        // TODO Dump memory
     end
 endmodule
