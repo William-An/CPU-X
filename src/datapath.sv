@@ -89,7 +89,7 @@ module datapath
 		dpif.dmem_addr		= aif0.out;
 		dpif.dmem_width 	= decif0.dmem_cmd.dmem_width;
 
-		// TODO
+		// Register this signal to avoid self-loop between dmem_wen and dhit
 		if (dpif.dhit) begin
 			next_served_data = 1'b1;
 		end

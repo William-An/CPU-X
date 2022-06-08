@@ -20,6 +20,7 @@ module tb_system;
         tb_nrst = 1'b1;
         tb_cycles = 0;
 
+        // Reset the device
         repeat (3) @(posedge tb_clk);
         tb_nrst = 1'b0;
         repeat (3) @(posedge tb_clk);

@@ -55,3 +55,15 @@ A RISC-V RV32IMA FPGA implementation.
 
 1. [x] rv32ui-p-add
 2. [ ] rv32ui-p-
+
+
+## References
+
+1. [RISCV ISA Manual](https://github.com/riscv/riscv-isa-manual)
+   1. Used 20191214-draft for unprivileged ISA
+   2. Used 20211203 for privileged ISA
+2. [RISCV ISA simulator](https://github.com/riscv-software-src/riscv-isa-sim)
+3. [RISCV unit test benchmark suite](https://github.com/riscv-software-src/riscv-tests)
+4. [Intel Quartus Lite](https://www.intel.com/content/www/us/en/software-kit/684215/intel-quartus-prime-lite-edition-design-software-version-21-1-for-linux.html)
+   1. For linux
+   2. Also if want to use the waveform simulator, need to register for a license

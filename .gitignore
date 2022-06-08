@@ -38,3 +38,6 @@ riscv-tests/
 *.spike
 *.spike_dump
 
+# Misc
+devNote.md
+

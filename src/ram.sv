@@ -43,6 +43,8 @@ module ram #(
         
 
         if (ram_rdy && lat_count >= LAT) begin
+            // If we have ram ready, means we are in an ongoing request
+            // If the the latency is reached, we are good to send the data
             _if.ram_state = RAM_DATA;
             n_ram_rdy = 1'b0;
             next_lat_count = '0;
@@ -50,10 +52,14 @@ module ram #(
         else begin
             casez ({_if.ram_wen, _if.ram_ren, _if.nrst})
                 3'b00?: begin
+                    // If no EN signals, the RAM is free to access
                     _if.ram_state = RAM_FREE;
                 end
                 3'b101,
                 3'b011: begin
+                    // Increment lat count to simulat multiple cycles ram
+                    // If the EN signals are up, still in addressing state
+                    // If the EN signals are up, we could serve the data in next cycle
                     _if.ram_state = RAM_ADDR;
                     next_lat_count = lat_count + 4'b1;
                     n_ram_rdy = 1'b1;

@@ -19,6 +19,7 @@ module memory_controller (
     
     // TODO Arbiter irequest and datarequest
     always_comb begin: ARIBITER
+        // Just some initial setup to avoid latches
         _dpif.imem_load = '0;
         _dpif.ihit = 1'b0;
         _dpif.dhit = 1'b0;
@@ -31,11 +32,15 @@ module memory_controller (
 
 
         // Serving last request
+        // ram_state will only change after a flipflop (ready signal in ram.sv)
+        // Thus no self-loop by feeding the ram outputs to memory controller and control ram inputs 
         if (_ramif.ram_state == RAM_DATA) begin
+            // RAM last request is ready
             // Single port ram
             _ramif.ram_wen = 1'b0;
             _ramif.ram_ren = 1'b0;
 
+            // Signal datapath correspondingly based on their request ENs
             if (_dpif.dmem_wen) begin
                 _dpif.dhit = 1'b1;
             end
