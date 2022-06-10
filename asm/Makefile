@@ -2,7 +2,7 @@
 
 RISCV_PREFIX := riscv64-unknown-elf-
 RISCV_CFLAGS := -march=rv32i -mabi=ilp32 -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles 
-RISCV_OBJDUMP_FLAGS := -Mno-aliases -Mnumeric --disassemble-all --disassemble-zeroes --section=.text --section=.text.startup --section=.text.init --section=.data
+RISCV_OBJDUMP_FLAGS := -Mno-aliases -Mnumeric --disassemble-all --disassemble-zeroes --section=.text --section=.text.startup --section=.text.init --section=.data --section=.tohost
 
 LINKER_OPTS			:= -T systemverilog.lds
 SPIKE_LINKER_OPTS	:= -T spike32.lds 
@@ -16,11 +16,17 @@ ASM_FILES :=
 %.riscv: %.S
 	@$(RISCV_PREFIX)gcc $(RISCV_CFLAGS) $(LINKER_OPTS) -o $*.riscv $<
 
+%.riscv_expand_macro: %.S
+	@$(RISCV_PREFIX)gcc -E $(RISCV_CFLAGS) $(LINKER_OPTS) -o $*.riscv_expand_macro $<
+
 # Compile using spike linker script and enable macros in util.h for spike
 # TODO Right now the spike will run indefinitely in a deadloop, need to check
 # TODO the value in x3 or gp register. If zero, all tests passed, else contains the failed test num
 %.spike: %.S
 	@$(RISCV_PREFIX)gcc $(RISCV_CFLAGS) $(SPIKE_LINKER_OPTS) -DSPIKE -o $*.spike $<
+
+%.spike_expand_macro: %.S
+	@$(RISCV_PREFIX)gcc -E $(RISCV_CFLAGS) $(SPIKE_LINKER_OPTS) -DSPIKE -o $*.spike_expand_macro $<
 
 %.dump: %.riscv
 	@$(RISCV_PREFIX)objdump $(RISCV_OBJDUMP_FLAGS) $< > $@

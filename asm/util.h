@@ -228,7 +228,7 @@ dead_loop:                                                                  \
 #else
     #define WRITE_TOHOST                                                    \
     write_tohost:                                                           \
-        sw TESTNUM, tohost, t5;                                             \
+        sw TESTNUM, tohost, t4;                                             \
         j write_tohost;                                                     
                                                             
     #define RVTEST_DATA_BEGIN                                               \

@@ -33,10 +33,12 @@ scripts/
 # ASM Tests
 riscv-tests/
 *.riscv
+*.riscv_expand_macro
 *.hex
 *.dump
 *.spike
 *.spike_dump
+*.spike_expand_macro
 
 # Misc
 devNote.md
