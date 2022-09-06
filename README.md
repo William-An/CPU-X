@@ -4,6 +4,7 @@ A RISC-V RV32IMA FPGA implementation.
 
 ## TODO
 
+1. [ ] Implement special registers and other instructions needed to run RISCV testsuite
 1. [ ] Own UNIT test asm files
     1. [ ] Use `ebreak` to generate a halt signal
     1. [ ] `add`
@@ -56,6 +57,13 @@ A RISC-V RV32IMA FPGA implementation.
 1. [x] rv32ui-p-add
 2. [ ] rv32ui-p-
 
+## Make commands
+
+1. RISC-V Testsuite
+   1. Use `make benchmark_BENCHMARK` or `make isa_ISATEST` to generate the `meminit.hex`
+   2. Cannot use right now as it need some other instructions and special registers implemented (crrs)
+2. asm
+   1. Own unitest file, very much similar to the riscv official one
 
 ## References
 
