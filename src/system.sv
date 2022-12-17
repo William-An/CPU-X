@@ -15,13 +15,15 @@
 
 import rv32ima_pkg::*;
 
-module system
+module system #(
+	PC_INIT=-4
+)
 (
 	input clk,
 	input nrst,
 	output word_t data
 );
-
+	
 	// Testing synthesis size
 	logic cpu_clk;
 	always_ff @( posedge clk, negedge nrst ) begin : CPU_CLK
@@ -40,7 +42,7 @@ module system
 	assign data = crif.ram_load;
 
 	// Module
-	datapath dp0(dpif);
+	datapath #(.PC_INIT(PC_INIT)) dp0(dpif);
 	
 	// TODO: memory controller/arbiter
 	memory_controller mc(dpif, crif);

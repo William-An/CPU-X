@@ -12,7 +12,8 @@
 
 module pc #(
     PC_INIT = -4
-) (
+)
+(
     pc_if.pc _if
 );
     import rv32ima_pkg::*;

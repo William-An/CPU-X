@@ -18,7 +18,9 @@
 
 import rv32ima_pkg::*;
 
-module datapath
+module datapath #(
+	parameter PC_INIT=-4
+)
 (
 	datapath_if.dp dpif
 );
@@ -143,10 +145,10 @@ module datapath
 	end
 
     // Initializing modules
-    pc      pc0(pcif0);
-	decoder dec0(decif0);
-	regfile rf0(rfif0);
-	alu 	alu0(aif0);
-	branch_resolver br(brif0);
+    pc #(.PC_INIT(PC_INIT)) pc0(pcif0);
+	 decoder dec0(decif0);
+	 regfile rf0(rfif0);
+	 alu 	alu0(aif0);
+	 branch_resolver br(brif0);
 
 endmodule
