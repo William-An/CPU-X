@@ -6,7 +6,8 @@ module tb_system;
     import rv32ima_pkg::*;
 	
     localparam CLK_PERIOD = 10;
-	localparam PC_INIT = 32'h80000000;
+	 // localparam PC_INIT = 32'h80000000;
+	 localparam PC_INIT = -4;
     logic tb_clk;
     logic tb_nrst;
     word_t tb_data;

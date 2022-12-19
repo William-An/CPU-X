@@ -29,6 +29,8 @@ module datapath #(
     pc_if pcif0(dpif.clk, dpif.nrst);
 	decoder_if decif0();
 	regfile_if rfif0(dpif.clk, dpif.nrst);
+	csr_if csrif0(dpif.clk, dpif.nrst);
+
 	alu_if aif0();
 	branch_resolver_if brif0();
     word_t ext_load;    // Signed extended load val
@@ -80,6 +82,11 @@ module datapath #(
 
 		// Connecting signals to decoder
 		decif0.inst	= inst;
+
+		// Connecting signals to CSR unit
+		csrif0.csr_cmd = decif0.csr_cmd;
+		csrif0.csr_input.uimm = decif0.csr_uimm;
+		csrif0.csr_input.reg_val = rfif0.rdat1;
 
 		// Connecting signals to ALU
 		aif0.in1 = decif0.alu_cmd.alu_insel[0] == 1'b0 ? rfif0.rdat1 : pcif0.curr_pc;
@@ -140,15 +147,17 @@ module datapath #(
 			ALU_OUT: 	rfif0.wdat = aif0.out;
 			LOAD_OUT:	rfif0.wdat = ext_load;
 			NPC:		rfif0.wdat = pcif0.pc_add4;
+			CSR_OUT:	rfif0.wdat = csrif0.csr_val;
 			default:	rfif0.wdat = aif0.out;
 		endcase
 	end
 
     // Initializing modules
     pc #(.PC_INIT(PC_INIT)) pc0(pcif0);
-	 decoder dec0(decif0);
-	 regfile rf0(rfif0);
-	 alu 	alu0(aif0);
-	 branch_resolver br(brif0);
+	decoder 				dec0(decif0);
+	regfile 				rf0(rfif0);
+	csr						csr0(csrif0);
+	alu 					alu0(aif0);
+	branch_resolver 		br(brif0);
 
 endmodule

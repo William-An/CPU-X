@@ -19,6 +19,7 @@ package rv32ima_pkg;
     localparam LDST_WIDTH_W = FUNCT3_W;
     localparam FUNCT5_W = 5;
     localparam FUNCT7_W = 7;
+    localparam FUNCT12_W = 12;
     localparam BIT_WIDTH = 32;
     
     // ALU Op bit width
@@ -65,6 +66,24 @@ package rv32ima_pkg;
         OR      = 3'b110,
         AND     = 3'b111
     } funct3_t;
+
+    // System funct3 type
+    typedef enum logic [FUNCT3_W - 1:0] { 
+        PRIV        = 3'b000,
+        CSRRW       = 3'b001,
+        CSRRS       = 3'b010,
+        CSRRC       = 3'b011,
+        PRIVM       = 3'b100,
+        CSRRWI      = 3'b101,
+        CSRRSI      = 3'b110,
+        CSRRCI      = 3'b111
+    } system_funct3_t;
+
+    // System PRIV instructions funct12
+    typedef enum logic [FUNCT12_W - 1:0] { 
+        ECALL        = 12'b000000000000,
+        EBREAK       = 12'b000000000001
+    } system_funct12_t;
 
     // Load and store width funct3
     typedef enum logic [LDST_WIDTH_W - 1:0] { 
@@ -209,7 +228,8 @@ package rv32ima_pkg;
     typedef enum logic [1:0] {
         ALU_OUT,
         LOAD_OUT,
-        NPC         // Next instruction, or PC + 4
+        NPC,         // Next instruction, or PC + 4
+        CSR_OUT
     } wdat_sel_t;
 
     typedef enum logic [1:0] {
@@ -290,6 +310,7 @@ package rv32ima_pkg;
     localparam logic [11:0] CSR_VXRM = 12'ha;
     localparam logic [11:0] CSR_VCSR = 12'hf;
     localparam logic [11:0] CSR_SEED = 12'h15;
+    localparam logic [11:0] CSR_JVT = 12'h17;
     localparam logic [11:0] CSR_CYCLE = 12'hc00;
     localparam logic [11:0] CSR_TIME = 12'hc01;
     localparam logic [11:0] CSR_INSTRET = 12'hc02;
@@ -332,11 +353,16 @@ package rv32ima_pkg;
     localparam logic [11:0] CSR_STVEC = 12'h105;
     localparam logic [11:0] CSR_SCOUNTEREN = 12'h106;
     localparam logic [11:0] CSR_SENVCFG = 12'h10a;
+    localparam logic [11:0] CSR_SSTATEEN0 = 12'h10c;
+    localparam logic [11:0] CSR_SSTATEEN1 = 12'h10d;
+    localparam logic [11:0] CSR_SSTATEEN2 = 12'h10e;
+    localparam logic [11:0] CSR_SSTATEEN3 = 12'h10f;
     localparam logic [11:0] CSR_SSCRATCH = 12'h140;
     localparam logic [11:0] CSR_SEPC = 12'h141;
     localparam logic [11:0] CSR_SCAUSE = 12'h142;
     localparam logic [11:0] CSR_STVAL = 12'h143;
     localparam logic [11:0] CSR_SIP = 12'h144;
+    localparam logic [11:0] CSR_STIMECMP = 12'h14d;
     localparam logic [11:0] CSR_SATP = 12'h180;
     localparam logic [11:0] CSR_SCONTEXT = 12'h5a8;
     localparam logic [11:0] CSR_VSSTATUS = 12'h200;
@@ -347,6 +373,7 @@ package rv32ima_pkg;
     localparam logic [11:0] CSR_VSCAUSE = 12'h242;
     localparam logic [11:0] CSR_VSTVAL = 12'h243;
     localparam logic [11:0] CSR_VSIP = 12'h244;
+    localparam logic [11:0] CSR_VSTIMECMP = 12'h24d;
     localparam logic [11:0] CSR_VSATP = 12'h280;
     localparam logic [11:0] CSR_HSTATUS = 12'h600;
     localparam logic [11:0] CSR_HEDELEG = 12'h602;
@@ -356,6 +383,10 @@ package rv32ima_pkg;
     localparam logic [11:0] CSR_HCOUNTEREN = 12'h606;
     localparam logic [11:0] CSR_HGEIE = 12'h607;
     localparam logic [11:0] CSR_HENVCFG = 12'h60a;
+    localparam logic [11:0] CSR_HSTATEEN0 = 12'h60c;
+    localparam logic [11:0] CSR_HSTATEEN1 = 12'h60d;
+    localparam logic [11:0] CSR_HSTATEEN2 = 12'h60e;
+    localparam logic [11:0] CSR_HSTATEEN3 = 12'h60f;
     localparam logic [11:0] CSR_HTVAL = 12'h643;
     localparam logic [11:0] CSR_HIP = 12'h644;
     localparam logic [11:0] CSR_HVIP = 12'h645;
@@ -363,6 +394,7 @@ package rv32ima_pkg;
     localparam logic [11:0] CSR_HGATP = 12'h680;
     localparam logic [11:0] CSR_HCONTEXT = 12'h6a8;
     localparam logic [11:0] CSR_HGEIP = 12'he12;
+    localparam logic [11:0] CSR_SCOUNTOVF = 12'hda0;
     localparam logic [11:0] CSR_UTVT = 12'h7;
     localparam logic [11:0] CSR_UNXTI = 12'h45;
     localparam logic [11:0] CSR_UINTSTATUS = 12'h46;
@@ -386,6 +418,10 @@ package rv32ima_pkg;
     localparam logic [11:0] CSR_MTVEC = 12'h305;
     localparam logic [11:0] CSR_MCOUNTEREN = 12'h306;
     localparam logic [11:0] CSR_MENVCFG = 12'h30a;
+    localparam logic [11:0] CSR_MSTATEEN0 = 12'h30c;
+    localparam logic [11:0] CSR_MSTATEEN1 = 12'h30d;
+    localparam logic [11:0] CSR_MSTATEEN2 = 12'h30e;
+    localparam logic [11:0] CSR_MSTATEEN3 = 12'h30f;
     localparam logic [11:0] CSR_MCOUNTINHIBIT = 12'h320;
     localparam logic [11:0] CSR_MSCRATCH = 12'h340;
     localparam logic [11:0] CSR_MEPC = 12'h341;
@@ -552,8 +588,14 @@ package rv32ima_pkg;
     localparam logic [11:0] CSR_MIMPID = 12'hf13;
     localparam logic [11:0] CSR_MHARTID = 12'hf14;
     localparam logic [11:0] CSR_MCONFIGPTR = 12'hf15;
+    localparam logic [11:0] CSR_STIMECMPH = 12'h15d;
+    localparam logic [11:0] CSR_VSTIMECMPH = 12'h25d;
     localparam logic [11:0] CSR_HTIMEDELTAH = 12'h615;
     localparam logic [11:0] CSR_HENVCFGH = 12'h61a;
+    localparam logic [11:0] CSR_HSTATEEN0H = 12'h61c;
+    localparam logic [11:0] CSR_HSTATEEN1H = 12'h61d;
+    localparam logic [11:0] CSR_HSTATEEN2H = 12'h61e;
+    localparam logic [11:0] CSR_HSTATEEN3H = 12'h61f;
     localparam logic [11:0] CSR_CYCLEH = 12'hc80;
     localparam logic [11:0] CSR_TIMEH = 12'hc81;
     localparam logic [11:0] CSR_INSTRETH = 12'hc82;
@@ -588,6 +630,39 @@ package rv32ima_pkg;
     localparam logic [11:0] CSR_HPMCOUNTER31H = 12'hc9f;
     localparam logic [11:0] CSR_MSTATUSH = 12'h310;
     localparam logic [11:0] CSR_MENVCFGH = 12'h31a;
+    localparam logic [11:0] CSR_MSTATEEN0H = 12'h31c;
+    localparam logic [11:0] CSR_MSTATEEN1H = 12'h31d;
+    localparam logic [11:0] CSR_MSTATEEN2H = 12'h31e;
+    localparam logic [11:0] CSR_MSTATEEN3H = 12'h31f;
+    localparam logic [11:0] CSR_MHPMEVENT3H = 12'h723;
+    localparam logic [11:0] CSR_MHPMEVENT4H = 12'h724;
+    localparam logic [11:0] CSR_MHPMEVENT5H = 12'h725;
+    localparam logic [11:0] CSR_MHPMEVENT6H = 12'h726;
+    localparam logic [11:0] CSR_MHPMEVENT7H = 12'h727;
+    localparam logic [11:0] CSR_MHPMEVENT8H = 12'h728;
+    localparam logic [11:0] CSR_MHPMEVENT9H = 12'h729;
+    localparam logic [11:0] CSR_MHPMEVENT10H = 12'h72a;
+    localparam logic [11:0] CSR_MHPMEVENT11H = 12'h72b;
+    localparam logic [11:0] CSR_MHPMEVENT12H = 12'h72c;
+    localparam logic [11:0] CSR_MHPMEVENT13H = 12'h72d;
+    localparam logic [11:0] CSR_MHPMEVENT14H = 12'h72e;
+    localparam logic [11:0] CSR_MHPMEVENT15H = 12'h72f;
+    localparam logic [11:0] CSR_MHPMEVENT16H = 12'h730;
+    localparam logic [11:0] CSR_MHPMEVENT17H = 12'h731;
+    localparam logic [11:0] CSR_MHPMEVENT18H = 12'h732;
+    localparam logic [11:0] CSR_MHPMEVENT19H = 12'h733;
+    localparam logic [11:0] CSR_MHPMEVENT20H = 12'h734;
+    localparam logic [11:0] CSR_MHPMEVENT21H = 12'h735;
+    localparam logic [11:0] CSR_MHPMEVENT22H = 12'h736;
+    localparam logic [11:0] CSR_MHPMEVENT23H = 12'h737;
+    localparam logic [11:0] CSR_MHPMEVENT24H = 12'h738;
+    localparam logic [11:0] CSR_MHPMEVENT25H = 12'h739;
+    localparam logic [11:0] CSR_MHPMEVENT26H = 12'h73a;
+    localparam logic [11:0] CSR_MHPMEVENT27H = 12'h73b;
+    localparam logic [11:0] CSR_MHPMEVENT28H = 12'h73c;
+    localparam logic [11:0] CSR_MHPMEVENT29H = 12'h73d;
+    localparam logic [11:0] CSR_MHPMEVENT30H = 12'h73e;
+    localparam logic [11:0] CSR_MHPMEVENT31H = 12'h73f;
     localparam logic [11:0] CSR_MSECCFGH = 12'h757;
     localparam logic [11:0] CSR_MCYCLEH = 12'hb80;
     localparam logic [11:0] CSR_MINSTRETH = 12'hb82;

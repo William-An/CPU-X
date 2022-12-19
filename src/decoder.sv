@@ -1,13 +1,14 @@
 /**
  * File name:	decoder.sv
- * Created:	12/22/2021
+ * Created:	12/18/2022
  * Author:	Weili An
  * Email:	an107@purdue.edu
- * Version:	1.0 Initial Design Entry
+ * Version:	1.1 Adding CSR
  * Description:	Decoder implementation
  */
 
 `include "decoder_if.svh"
+`include "csr_if.svh"
 `include "rv32ima_pkg.svh"
 
 module decoder (
@@ -23,6 +24,9 @@ module decoder (
     u_type u_inst;
     j_type j_inst;
 
+    // System inst funct3 casting var
+    system_funct3_t sfunct3;
+
     logic inst_msb;
 
     always_comb begin : DECODE
@@ -33,6 +37,8 @@ module decoder (
         _if.control_type = '0;
         _if.inst_type = RTYPE;
         _if.imm32 = '0;
+        _if.csr_cmd = '0;
+        _if.csr_uimm = '0;
 
         // Casting
         r_inst = r_type'(_if.inst);
@@ -41,6 +47,7 @@ module decoder (
         b_inst = b_type'(r_inst);
         u_inst = u_type'(r_inst);
         j_inst = j_type'(r_inst);
+        sfunct3 = system_funct3_t'(i_inst.funct3);
 
         // Transparent regfile signals
         _if.rf_cmd.rs1 = r_inst.rs1;
@@ -221,9 +228,30 @@ module decoder (
             end
 
             // TODO Implement later
-            // SYSTEM:  begin 
-                
-            // end
+            SYSTEM:  begin 
+                if (sfunct3 != PRIV && sfunct3 != PRIVM) begin
+                    // Focus on CSRR instructions
+                    _if.csr_cmd.index = i_inst.imm;
+                    _if.csr_cmd.opcode = sfunct3;
+                    _if.csr_cmd.ren = 1'b1;
+                    _if.csr_cmd.wen = 1'b1;
+                    _if.csr_uimm = i_inst.rs1;
+                    
+                    // Enable write to register file
+                    _if.rf_cmd.wen      = 1'b1;
+                    _if.rf_cmd.wdat_sel = CSR_OUT;
+                    
+                    if ((sfunct3 == CSRRW || sfunct3 == CSRRWI) && i_inst.rd == '0) begin
+                        // Atomic swap
+                        _if.csr_cmd.ren = 1'b0;
+                    end
+                    if ((sfunct3 == CSRRS   || sfunct3 == CSRRC || 
+                         sfunct3 == CSRRSI  || sfunct3 == CSRRCI  ) && i_inst.rs1 == '0) begin
+                        // bit clear
+                        _if.csr_cmd.wen = 1'b0;
+                    end
+                end
+            end
 
             default: begin
                 // TODO Unrecognized opcode, might need to raise excception
