@@ -1,56 +1,44 @@
 # CPU-X
 
-A RISC-V RV32IMA FPGA implementation.
+A RISC-V RV32IMA+Zicsr FPGA implementation.
 
 ## TODO
 
-1. [ ] Implement special registers and other instructions needed to run RISCV testsuite
-1. [ ] Own UNIT test asm files
-    1. [ ] Use `ebreak` to generate a halt signal
-    1. [ ] `add`
-    1. [ ] `addi`
-    1. [ ] `and`
-    1. [ ] `andi`
-    1. [ ] `auipc`
-    1. [ ] `beq`
-    1. [ ] `bge`
-    1. [ ] `bgeu`
-    1. [ ] `blt`
-    1. [ ] `bltu`
-    1. [ ] `bne`
-    1. [ ] `fenci_i`
-    1. [ ] `jal`
-    1. [ ] `jalr`
-    1. [ ] `lb`
-    1. [ ] `lbu`
-    1. [ ] `lh`
-    1. [ ] `lhu`
-    1. [ ] `lui`
-    1. [ ] `lw`
-    1. [ ] `or`
-    1. [ ] `ori`
-    1. [ ] `sb`
-    1. [ ] `sh`
-    1. [ ] `sll`
-    1. [ ] `slli`
-    1. [ ] `slt`
-    1. [ ] `sltu`
-    1. [ ] `sra`
-    1. [ ] `srai`
-    1. [ ] `srl`
-    1. [ ] `srli`
-    1. [ ] `sub`
-    1. [ ] `sw`
-    1. [ ] `xor`
-    1. [ ] `xori`
+### Stage I: SingleCycle
 
-1. [ ] Auto tester for unit test asm from riscv-tests
+1. [x] Implement unprivileged isa
+2. [ ] Implement machine-mode (privileged) isa
+   1. [ ] CSR register and instruction support
+      1. [ ] What CSR registers needed?
+         1. [ ] Those in machine-mode
+            1. [ ] A total of 4096 CSRs
+            2. [ ] Map those in user and supervisor mode to zeros
+         2. [ ] Performance monitor could be optional
+      2. [ ] Instruction needed: Zicsr extension
+      3. [ ] Need to determine what additional signals needed to the CSR module
+         1. [ ] Like interrupt and exception signals
+   2. [ ] Interrupt/Exception generator/handler
+      1. [ ] What are the interrupts and execptions needed to support?
+3. [ ] Need to pass riscv isa tests in machine mode
+4. [ ] Auto tester for unit test asm from riscv-tests
     1. Noted the `benchmarks` tests are with rv64?
     2. Can use ecall to pause on?
     3. Use different linker script for spike and the systemverilog one?
     4. Implement Machine-Level CSR and corresponding instructions after pipelined CPU passed
         1. Refer to the privileged ISA manual
         2. At least the Machine and the User side?
+
+### Stage II: Pipeline
+
+1. [ ] Implement pipeline CPU with machine-mode
+2. [ ] Make sure the exception/interrupt are precise
+
+### Stage III: Peripheral
+
+1. [ ] Implement a memory bus to connect on-chip and off-chip RAM/ROM
+2. [ ] Implement programmer? To program the chip without quartus, like a real embedded system
+3. [ ] Also other embedded peripheral
+4. [ ] Build a memory map
 
 ## Test cases passed
 
