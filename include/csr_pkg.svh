@@ -4,7 +4,7 @@
  * Author:	Weili An
  * Email:	an107@purdue.edu
  * Version:	1.0 Initial Design Entry
- * Description:	Types for a subset of CSR registers
+ * Description:	Bits enums for a subset of CSR registers
 */
 
 `ifndef __CSR_PKG_VH__

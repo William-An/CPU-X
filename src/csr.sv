@@ -9,11 +9,41 @@
 
 `include "csr_if.svh"
 `include "rv32ima_pkg.svh"
+`include "csr_pkg.svh"
 
 import rv32ima_pkg::*;
+import csr_pkg::*;
 
 localparam CSR_REG_W = 5;
 localparam CSR_COUNT = 2**CSR_REG_W;
+
+typedef enum logic [CSR_REG_W - 1:0] { 
+    PHY_CSR_ZEROS = 'd0,
+    PHY_CSR_MVENDORID,
+    PHY_CSR_MARCHID,
+    PHY_CSR_MIMPID,
+    PHY_CSR_MHARTID,
+    PHY_CSR_MCONFIGPTR,
+    PHY_CSR_MSTATUS,
+    PHY_CSR_MISA,
+    PHY_CSR_MEDELEG,
+    PHY_CSR_MIDELEG,
+    PHY_CSR_MIE,
+    PHY_CSR_MTVEC,
+    PHY_CSR_MCOUNTEREN,
+    PHY_CSR_MSTATUSH,
+    PHY_CSR_MSCRATCH,
+    PHY_CSR_MEPC,
+    PHY_CSR_MCAUSE,
+    PHY_CSR_MTVAL,
+    PHY_CSR_MIP,
+    PHY_CSR_MTINST,
+    PHY_CSR_MTVAL2,
+    PHY_CSR_MENVCFG,
+    PHY_CSR_MENVCFGH,
+    PHY_CSR_MSECCFG,
+    PHY_CSR_MSECCFGH
+} pcsr_index_t;
 
 module csr (
     csr_if.csr _if
@@ -28,8 +58,14 @@ module csr (
     assign uimm32 = {27'b0, _if.csr_input.uimm};
 
     always_ff @(posedge _if.clk, negedge _if.nrst) begin : CSR_REG
-        if (_if.nrst == 1'b0)
+        if (_if.nrst == 1'b0) begin
             csr <= '0;
+
+            // Set I-bit in MISA to indicate the CPU support RV32I ISA
+            // Also set MXL to 32 bit
+            csr[PHY_CSR_MISA][MISA_EXT_I_RVIBASE_BIT] <= 1'b1;
+            csr[PHY_CSR_MISA][MISA_MXL_BIT1:MISA_MXL_BIT0] <= MISA_MXL_32;
+        end
         else
             csr <= next_csr;
     end
@@ -125,7 +161,7 @@ endmodule
 
 task CSR_Regfile_Hashing;
     input logic [11:0] csr_index;
-    output logic [CSR_REG_W - 1:0] hashed_index;
+    output pcsr_index_t hashed_index;
     begin
         // Limited M-mode CSR registers
         // From top to bottom
@@ -134,34 +170,34 @@ task CSR_Regfile_Hashing;
         // Machine trap handling registers
         // Machine configuration registers
         casez(csr_index)
-            CSR_MVENDORID:  hashed_index = 'd1;
-            CSR_MARCHID:    hashed_index = 'd2;
-            CSR_MIMPID:     hashed_index = 'd3;
-            CSR_MHARTID:    hashed_index = 'd4;
-            CSR_MCONFIGPTR: hashed_index = 'd5;
+            CSR_MVENDORID:  hashed_index =  PHY_CSR_MVENDORID;
+            CSR_MARCHID:    hashed_index =  PHY_CSR_MARCHID;
+            CSR_MIMPID:     hashed_index =  PHY_CSR_MIMPID;
+            CSR_MHARTID:    hashed_index =  PHY_CSR_MHARTID;
+            CSR_MCONFIGPTR: hashed_index =  PHY_CSR_MCONFIGPTR;
             
-            CSR_MSTATUS:    hashed_index = 'd6;
-            CSR_MISA:       hashed_index = 'd7;
-            CSR_MEDELEG:    hashed_index = 'd8;
-            CSR_MIDELEG:    hashed_index = 'd9;
-            CSR_MIE:        hashed_index = 'd10;
-            CSR_MTVEC:      hashed_index = 'd11;
-            CSR_MCOUNTEREN: hashed_index = 'd12;
-            CSR_MSTATUSH:   hashed_index = 'd13;
+            CSR_MSTATUS:    hashed_index =  PHY_CSR_MSTATUS;
+            CSR_MISA:       hashed_index =  PHY_CSR_MISA;
+            CSR_MEDELEG:    hashed_index =  PHY_CSR_MEDELEG;
+            CSR_MIDELEG:    hashed_index =  PHY_CSR_MIDELEG;
+            CSR_MIE:        hashed_index =  PHY_CSR_MIE;
+            CSR_MTVEC:      hashed_index =  PHY_CSR_MTVEC;
+            CSR_MCOUNTEREN: hashed_index =  PHY_CSR_MCOUNTEREN;
+            CSR_MSTATUSH:   hashed_index =  PHY_CSR_MSTATUSH;
 
-            CSR_MSCRATCH:   hashed_index = 'd14;
-            CSR_MEPC:       hashed_index = 'd15;
-            CSR_MCAUSE:     hashed_index = 'd16;
-            CSR_MTVAL:      hashed_index = 'd17;
-            CSR_MIP:        hashed_index = 'd18;
-            CSR_MTINST:     hashed_index = 'd19;
-            CSR_MTVAL2:     hashed_index = 'd20;
+            CSR_MSCRATCH:   hashed_index =  PHY_CSR_MSCRATCH;
+            CSR_MEPC:       hashed_index =  PHY_CSR_MEPC;
+            CSR_MCAUSE:     hashed_index =  PHY_CSR_MCAUSE;
+            CSR_MTVAL:      hashed_index =  PHY_CSR_MTVAL;
+            CSR_MIP:        hashed_index =  PHY_CSR_MIP;
+            CSR_MTINST:     hashed_index =  PHY_CSR_MTINST;
+            CSR_MTVAL2:     hashed_index =  PHY_CSR_MTVAL2;
             
-            CSR_MENVCFG:    hashed_index = 'd21;
-            CSR_MENVCFGH:   hashed_index = 'd22;
-            CSR_MSECCFG:    hashed_index = 'd23;
-            CSR_MSECCFGH:   hashed_index = 'd24;
-            default: hashed_index = 'd0;    // this register should hard-wired to zeros
+            CSR_MENVCFG:    hashed_index =  PHY_CSR_MENVCFG;
+            CSR_MENVCFGH:   hashed_index =  PHY_CSR_MENVCFGH;
+            CSR_MSECCFG:    hashed_index =  PHY_CSR_MSECCFG;
+            CSR_MSECCFGH:   hashed_index =  PHY_CSR_MSECCFGH;
+            default: hashed_index = PHY_CSR_ZEROS;    // this register should hard-wired to zeros
         endcase
     end
 endtask

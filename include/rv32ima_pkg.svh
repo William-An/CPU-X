@@ -2,7 +2,7 @@
  * File name:	rv32ima_pkg.svh
  * Created:	12/22/2021
  * Author:	Weili An
- * Email:	an108@purdue.edu
+ * Email:	an107@purdue.edu
  * Version:	1.0 Initial Design Entry
  * Description:	Types for RV32IMA implementation, based on riscv-opcodes repo
 */
