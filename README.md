@@ -9,16 +9,45 @@ A RISC-V RV32IMA+Zicsr FPGA implementation.
 1. [x] Implement unprivileged isa
 2. [ ] Implement machine-mode (privileged) isa
    1. [ ] CSR register and instruction support
-      1. [ ] What CSR registers needed?
-         1. [ ] Those in machine-mode
-            1. [ ] A total of 4096 CSRs
-            2. [ ] Map those in user and supervisor mode to zeros
-         2. [ ] Performance monitor could be optional
-      2. [ ] Instruction needed: Zicsr extension
-      3. [ ] Need to determine what additional signals needed to the CSR module
+      1. [x] What CSR registers needed?
+         1. [x] Those in machine-mode
+            1. [ ] A total of 4096 CSRs with default values
+               1. [ ] `misa`
+               2. [ ] `mvendorid`: zeros
+               3. [ ] `marchid`: zeros
+               4. [ ] `mimpid`: zeros
+               5. [ ] `mhartid`: zeros
+               6. [ ] `mstatus`
+               7. [ ] `mstatush`
+               8. [ ] `mtvec`
+               9. [ ] `medeleg` and `mideleg`
+               10. [ ] `mie` and `mip`
+               11. [ ] `mscratch`
+               12. [ ] `mepc`
+               13. [ ] `mcause`
+               14. [ ] `mtval`
+            2. [x] Map those in user and supervisor mode to zeros
+         2. [x] Performance monitor could be optional
+      2. [x] Instruction needed: Zicsr extension
+      3. [ ] Instruction needed: machine-level privileged instructions
+         1. [ ] `ecall`
+         2. [ ] `ebreak`
+         3. [ ] `mret`
+         4. [ ] `wfi`: could be a nop
+      4. [ ] CSR R/W permission protection, check `index[11:10]` bits
+      5. [ ] Need to determine what additional signals needed to the CSR module
          1. [ ] Like interrupt and exception signals
    2. [ ] Interrupt/Exception generator/handler
-      1. [ ] What are the interrupts and execptions needed to support?
+      1. [ ] Merge with the CSR unit to faciliate easy CSR values modification 
+      2. [ ] What are the interrupts and execptions needed to support?
+         1. [ ] Just implement Exception for now?
+            1. [ ] Inst addr misalign
+            2. [ ] Inst illegal
+            3. [ ] breakpoint
+            4. [ ] load/store addr misalign
+            5. [ ] environment call m-mode
+            6. [ ] Also need to set epc
+            7. [x] ~~Also need to save context?~~ Unlike STM32, software saves the context
 3. [ ] Need to pass riscv isa tests in machine mode
 4. [ ] Auto tester for unit test asm from riscv-tests
     1. Noted the `benchmarks` tests are with rv64?
@@ -37,8 +66,9 @@ A RISC-V RV32IMA+Zicsr FPGA implementation.
 
 1. [ ] Implement a memory bus to connect on-chip and off-chip RAM/ROM
 2. [ ] Implement programmer? To program the chip without quartus, like a real embedded system
-3. [ ] Also other embedded peripheral
-4. [ ] Build a memory map
+3. [ ] Debugger support? Like On-chip breakpoints
+4. [ ] Also other embedded peripheral
+5. [ ] Build a memory map
 
 ## Test cases passed
 
