@@ -233,6 +233,7 @@ module decoder (
                     // Focus on CSRR instructions
                     _if.csr_cmd.index = i_inst.imm;
                     _if.csr_cmd.opcode = sfunct3;
+                    _if.csr_cmd.valid = 1'b1;
                     _if.csr_cmd.ren = 1'b1;
                     _if.csr_cmd.wen = 1'b1;
                     _if.csr_uimm = i_inst.rs1;

@@ -57,6 +57,11 @@ localparam MVENDORID_OFFSET_END_BIT = 6;
 // mhartid: no subfield
 
 // mstatus and mstatush
+// privilege level encoding
+localparam MSTATUS_xPP_M_MODE = 2'b11;
+localparam MSTATUS_xPP_S_MODE = 2'b01;
+localparam MSTATUS_xPP_U_MODE = 2'b00;
+localparam MSTATUS_MPP_M = 3;
 localparam MSTATUS_SD_BIT = 31;
 localparam MSTATUS_TSR_BIT = 22;
 localparam MSTATUS_TW_BIT = 21;
@@ -84,7 +89,7 @@ localparam MSTATUSH_SBE_BIT = 4;
 
 // mtvec
 localparam MTVEC_BASE_START_BIT = 2;
-localparam MTVEC_BASE_END_BIT = 31;
+localparam MTVEC_BASE_END_BIT = XLEN - 1;
 localparam MTVEC_MODE_BIT1 = 1;
 localparam MTVEC_MODE_BIT0 = 0;
 localparam MTVEC_MODE_DIRECT = 0;

@@ -12,31 +12,32 @@ A RISC-V RV32IMA+Zicsr FPGA implementation.
       1. [x] What CSR registers needed?
          1. [x] Those in machine-mode
             1. [ ] A total of 4096 CSRs with default values
-               1. [ ] `misa`
-               2. [ ] `mvendorid`: zeros
-               3. [ ] `marchid`: zeros
-               4. [ ] `mimpid`: zeros
-               5. [ ] `mhartid`: zeros
-               6. [ ] `mstatus`
-               7. [ ] `mstatush`
-               8. [ ] `mtvec`
-               9. [ ] `medeleg` and `mideleg`
-               10. [ ] `mie` and `mip`
-               11. [ ] `mscratch`
-               12. [ ] `mepc`
-               13. [ ] `mcause`
-               14. [ ] `mtval`
+               1. [x] `misa`
+               2. [x] `mvendorid`: zeros
+               3. [x] `marchid`: zeros
+               4. [x] `mimpid`: zeros
+               5. [x] `mhartid`: zeros
+               6. [x] `mstatus`
+               7. [x] `mstatush`
+               8. [x] `mtvec`
+               9. [ ] ~~`medeleg` and `mideleg`~~
+               10. [ ] ~~`mie` and `mip`~~
+               11. [x] `mscratch`
+               12. [x] `mepc`
+               13. [x] `mcause`
+               14. [x] `mtval`
             2. [x] Map those in user and supervisor mode to zeros
          2. [x] Performance monitor could be optional
       2. [x] Instruction needed: Zicsr extension
       3. [ ] Instruction needed: machine-level privileged instructions
          1. [ ] `ecall`
          2. [ ] `ebreak`
-         3. [ ] `mret`
+         3. [ ] `mret`: need to modify CSR `mstatus`
          4. [ ] `wfi`: could be a nop
       4. [ ] CSR R/W permission protection, check `index[11:10]` bits
-      5. [ ] Need to determine what additional signals needed to the CSR module
-         1. [ ] Like interrupt and exception signals
+      5. [ ] CSR fields WARL, WLRL protection
+      6. [x] Need to determine what additional signals needed to the CSR module
+         1. [x] Like interrupt and exception signals
    2. [ ] Interrupt/Exception generator/handler
       1. [ ] Merge with the CSR unit to faciliate easy CSR values modification 
       2. [ ] What are the interrupts and execptions needed to support?

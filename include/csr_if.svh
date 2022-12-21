@@ -18,6 +18,7 @@ interface csr_if (input clk, input nrst);
     struct packed {
         logic [11:0]    index;  // CSR register index
         system_funct3_t opcode; // CSR opcode
+        logic           valid;  // The current instruction is a valid CSR inst
         logic           ren;    // CSR register ren, whether to read from CSR register
         logic           wen;    // CSR register wen, whether to write to CSR register
     } csr_cmd;
