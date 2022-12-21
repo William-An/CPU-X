@@ -15,12 +15,9 @@
 interface exception_if;
     import rv32ima_pkg::*;
 
-    logic inst_addr_misalign_flag;
-    logic load_addr_misalign_flag;
-    logic store_amo_addr_misalign_flag;
-    logic inst_illegal_flag;
-    logic ebreak_flag;
-    logic ecall_flag;
+    inst_fetch_exception_t  inst_fetch_exception_event;
+    ldst_exception_t        ldst_exception_event;
+    decoder_exception_t     dec_exception_event;
     word_t current_pc;          // Used to set epc register if necessary
 
     word_t epc_value;           // PC of the exception instruction
@@ -28,21 +25,15 @@ interface exception_if;
     logic trap_enable;          // ORing all the flags
 
     // Module that produce these signals for exception handling
-    modport publisher (output   inst_addr_misalign_flag,
-                                load_addr_misalign_flag,
-                                store_amo_addr_misalign_flag,
-                                inst_illegal_flag,
-                                ebreak_flag,
-                                ecall_flag,
+    modport publisher (output   inst_fetch_exception_event,
+                                ldst_exception_event,
+                                dec_exception_event,
                                 current_pc);
 
     // Module that use the signals and process them
-    modport subscriber (input   inst_addr_misalign_flag,
-                                load_addr_misalign_flag,
-                                store_amo_addr_misalign_flag,
-                                inst_illegal_flag,
-                                ebreak_flag,
-                                ecall_flag,
+    modport subscriber (input   inst_fetch_exception_event,
+                                ldst_exception_event,
+                                dec_exception_event,
                                 current_pc,
                         output  epc_value,
                                 trap_handler_addr,

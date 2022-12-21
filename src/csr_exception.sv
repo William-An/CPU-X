@@ -19,7 +19,7 @@ localparam CSR_REG_W = 5;
 localparam CSR_COUNT = 2**CSR_REG_W;
 
 typedef enum logic [CSR_REG_W - 1:0] { 
-    PHY_CSR_ZEROS = 'd0,
+    PHY_CSR_ZEROS = '0,
     PHY_CSR_MVENDORID,
     PHY_CSR_MARCHID,
     PHY_CSR_MIMPID,
@@ -48,7 +48,7 @@ typedef enum logic [CSR_REG_W - 1:0] {
 
 module csr_exception (
     csr_if.csr _if,
-    exception_if.subscriber _excp_if
+    exception_if.subscriber _excep_if
 );
 
     // TODO: Need to update CSR registers based on request to
@@ -82,15 +82,15 @@ module csr_exception (
         mtvec_base_addr = {csr[PHY_CSR_MTVEC][MTVEC_BASE_END_BIT:MTVEC_BASE_START_BIT], 2'b0};
         cause_code = '0;
         trap_value = '0;
-        _excp_if.epc_value = csr[PHY_CSR_MEPC];
-        _excp_if.trap_handler_addr = mtvec_base_addr;   // Default
-        exception_hit = _excp_if.inst_addr_misalign_flag | 
-                        _excp_if.load_addr_misalign_flag |
-                        _excp_if.store_amo_addr_misalign_flag |
-                        _excp_if.inst_illegal_flag |
-                        _excp_if.ebreak_flag |
-                        _excp_if.ecall_flag;
-        _excp_if.trap_enable = exception_hit;
+        _excep_if.epc_value = csr[PHY_CSR_MEPC];
+        _excep_if.trap_handler_addr = mtvec_base_addr;   // Default
+        exception_hit = _excep_if.inst_fetch_exception_event.inst_misalign | 
+                        _excep_if.ldst_exception_event.load_addr_misalign |
+                        _excep_if.ldst_exception_event.store_amo_addr_misalign |
+                        _excep_if.dec_exception_event.inst_illegal |
+                        _excep_if.dec_exception_event.ebreak |
+                        _excep_if.dec_exception_event.ecall;
+        _excep_if.trap_enable = exception_hit;
 
         // Exception hit
         if (exception_hit == 1'b1) begin
@@ -104,28 +104,28 @@ module csr_exception (
 
             // Now need to set the mcause register
             // Exception only right now
-            if (_excp_if.inst_illegal_flag) begin
+            if (_excep_if.dec_exception_event.inst_illegal) begin
                 cause_code = MCAUSE_CODE_EXCEPTION_INST_ILLEGAL;
             end 
-            else if (_excp_if.inst_addr_misalign_flag) begin
+            else if (_excep_if.inst_fetch_exception_event.inst_misalign) begin
                 cause_code = MCAUSE_CODE_EXCEPTION_INST_ADDR_MISALIGN;
             end
-            else if (_excp_if.ecall_flag) begin
+            else if (_excep_if.dec_exception_event.ecall) begin
                 // Since the current implementation is M-mode only
                 cause_code = MCAUSE_CODE_EXCEPTION_ENVIRONMENT_CALL_M_MODE;
             end
-            else if (_excp_if.ebreak_flag) begin
+            else if (_excep_if.dec_exception_event.ebreak) begin
                 cause_code = MCAUSE_CODE_EXCEPTION_BREAKPOINT;
             end
-            else if (_excp_if.load_addr_misalign_flag) begin
+            else if (_excep_if.ldst_exception_event.load_addr_misalign) begin
                 // If mtval is written with a nonzero value when address-misaligned,
                 // exception occurs on an instruction fetch, load, or store, 
                 // then mtval will contain the faulting virtual address
                 // Since no virtual memory support, just physical mem addr
                 cause_code = MCAUSE_CODE_EXCEPTION_LOAD_ADDR_MISALIGN;
-                trap_value = _excp_if.pc;
+                trap_value = _excep_if.current_pc;
             end
-            else if (_excp_if.store_amo_addr_misalign_flag) begin
+            else if (_excep_if.ldst_exception_event.store_amo_addr_misalign) begin
                 cause_code = MCAUSE_CODE_EXCEPTION_STORE_AMO_ADDR_MISALIGN;
             end
             // Write exception code to mcause register
@@ -138,11 +138,11 @@ module csr_exception (
             // Default handler address is set to be direct mode
             if (csr[PHY_CSR_MTVEC][MTVEC_MODE_BIT1:MTVEC_MODE_BIT0] == MTVEC_MODE_VECTORED) begin
                 // If vectored, jump to BASE + 4xcause address
-                _excp_if.trap_handler_addr = mtvec_base_addr + cause_code << 2;
+                _excep_if.trap_handler_addr = mtvec_base_addr + cause_code << 2;
             end
             
             // Finally we need to update the epc value
-            next_csr[PHY_CSR_MEPC] = _excp_if.pc;
+            next_csr[PHY_CSR_MEPC] = _excep_if.current_pc;
         end
         else if (_if.csr_cmd.valid == 1'b1) begin  // Else perform normal operation
             // Perform atomic swap and bit set/clear

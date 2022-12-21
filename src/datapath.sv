@@ -15,6 +15,8 @@
 `include "pc_if.svh"
 `include "branch_resolver_if.svh"
 `include "datapath_if.svh"
+`include "csr_if.svh"
+`include "exception_if.svh"
 
 import rv32ima_pkg::*;
 
@@ -30,6 +32,7 @@ module datapath #(
 	decoder_if decif0();
 	regfile_if rfif0(dpif.clk, dpif.nrst);
 	csr_if csrif0(dpif.clk, dpif.nrst);
+	exception_if exceptionif0();
 
 	alu_if aif0();
 	branch_resolver_if brif0();
@@ -87,6 +90,12 @@ module datapath #(
 		csrif0.csr_cmd = decif0.csr_cmd;
 		csrif0.csr_input.uimm = decif0.csr_uimm;
 		csrif0.csr_input.reg_val = rfif0.rdat1;
+
+		// Connecting signals to exception control
+		exceptionif0.inst_fetch_exception_event.inst_misalign = pcif0.curr_pc[1:0] == 2'b0;	// RV32, instruction at 4 byte boundary
+		exceptionif0.ldst_exception_event = '0;
+		exceptionif0.dec_exception_event = decif0.dec_exception_event;
+		exceptionif0.current_pc = pcif0.curr_pc;
 
 		// Connecting signals to ALU
 		aif0.in1 = decif0.alu_cmd.alu_insel[0] == 1'b0 ? rfif0.rdat1 : pcif0.curr_pc;
@@ -156,7 +165,7 @@ module datapath #(
     pc #(.PC_INIT(PC_INIT)) pc0(pcif0);
 	decoder 				dec0(decif0);
 	regfile 				rf0(rfif0);
-	csr						csr0(csrif0);
+	csr_exception			csr_exception0(csrif0, exceptionif0);
 	alu 					alu0(aif0);
 	branch_resolver 		br(brif0);
 

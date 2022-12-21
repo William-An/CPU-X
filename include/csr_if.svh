@@ -15,13 +15,7 @@
 interface csr_if (input clk, input nrst);
     import rv32ima_pkg::*;
 
-    struct packed {
-        logic [11:0]    index;  // CSR register index
-        system_funct3_t opcode; // CSR opcode
-        logic           valid;  // The current instruction is a valid CSR inst
-        logic           ren;    // CSR register ren, whether to read from CSR register
-        logic           wen;    // CSR register wen, whether to write to CSR register
-    } csr_cmd;
+    csr_cmd_t csr_cmd;
     
     // CSR input source, can be from rs1 register or a 5 bit imm value to be extended
     struct packed {

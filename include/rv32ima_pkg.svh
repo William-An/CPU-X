@@ -246,6 +246,30 @@ package rv32ima_pkg;
         RAM_ERROR
     } ram_state_t;
 
+    // csr cmd packet
+    typedef struct packed {
+        logic [11:0]    index;  // CSR register index
+        system_funct3_t opcode; // CSR opcode
+        logic           valid;  // The current instruction is a valid CSR inst
+        logic           ren;    // CSR register ren, whether to read from CSR register
+        logic           wen;    // CSR register wen, whether to write to CSR register
+    } csr_cmd_t;
+
+    typedef struct packed {
+        logic ecall;
+        logic ebreak;
+        logic inst_illegal;
+    } decoder_exception_t;
+
+    typedef struct packed {
+        logic load_addr_misalign;
+        logic store_amo_addr_misalign;
+    } ldst_exception_t;
+
+    typedef struct packed {
+        logic inst_misalign;
+    } inst_fetch_exception_t;
+
     // localparam [31:0] BEQ                = 32'b?????????????????000?????1100011;
     // localparam [31:0] BNE                = 32'b?????????????????001?????1100011;
     // localparam [31:0] BLT                = 32'b?????????????????100?????1100011;

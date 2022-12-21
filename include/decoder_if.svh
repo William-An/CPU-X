@@ -38,14 +38,9 @@ interface decoder_if;
         logic [LDST_WIDTH_W - 1:0]  dmem_width;  // LD/ST data width 
     } dmem_cmd;
 
-    struct packed {
-        logic [11:0]    index;  // CSR register index
-        system_funct3_t opcode; // CSR opcode
-        logic           ren;    // CSR register ren, whether to read from CSR register
-        logic           wen;    // CSR register wen, whether to write to CSR register
-    } csr_cmd;
-
+    csr_cmd_t csr_cmd;
     logic [4:0] csr_uimm;
+    decoder_exception_t dec_exception_event;
 
     bcontrol_t control_type;
 
@@ -54,13 +49,15 @@ interface decoder_if;
     logic [BIT_WIDTH - 1:0]     inst;
 
     modport decode (
-        input inst,
-        output alu_cmd, rf_cmd, dmem_cmd, control_type, inst_type, imm32, csr_cmd, csr_uimm
+        input   inst,
+        output  alu_cmd, rf_cmd, dmem_cmd, control_type, 
+                inst_type, imm32, csr_cmd, csr_uimm, dec_exception_event
     );
 
     modport tb (
-        input alu_cmd, rf_cmd, dmem_cmd, control_type, inst_type, imm32, csr_cmd, csr_uimm,
-        output inst
+        input   alu_cmd, rf_cmd, dmem_cmd, control_type, 
+                inst_type, imm32, csr_cmd, csr_uimm, dec_exception_event,
+        output  inst
     );
     
 endinterface // decoder_if
