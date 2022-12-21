@@ -5,6 +5,7 @@ output_files/
 *.qpf
 *.rpt
 *.qsf
+*.qws
 *.bak
 
 # QuestaSim FPGA starter edition

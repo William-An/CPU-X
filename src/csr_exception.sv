@@ -51,8 +51,6 @@ module csr_exception (
     exception_if.subscriber _excep_if
 );
 
-    // TODO: Need to update CSR registers based on request to
-    // TODO: hardware environment
     word_t [CSR_COUNT - 1:0] csr, next_csr;
     logic [CSR_REG_W - 1:0] csr_psel; // Physical CSR register select
     word_t uimm32;

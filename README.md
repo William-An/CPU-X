@@ -29,26 +29,26 @@ A RISC-V RV32IMA+Zicsr FPGA implementation.
             2. [x] Map those in user and supervisor mode to zeros
          2. [x] Performance monitor could be optional
       2. [x] Instruction needed: Zicsr extension
-      3. [ ] Instruction needed: machine-level privileged instructions
+      3. [x] Instruction needed: machine-level privileged instructions
          1. [X] `ecall`
          2. [X] `ebreak`
          3. [x] `mret`: need to modify CSR `mstatus`
-         4. [ ] `fence`
+         4. [x] ~~`fence`~~ (Implemented as NOP for now)
          5. [X] `wfi`: could be a nop
       4. [ ] CSR R/W permission protection, check `index[11:10]` bits
       5. [ ] CSR fields WARL, WLRL protection
       6. [x] Need to determine what additional signals needed to the CSR module
          1. [x] Like interrupt and exception signals
-   2. [ ] Interrupt/Exception generator/handler
-      1. [ ] Merge with the CSR unit to faciliate easy CSR values modification 
-      2. [ ] What are the interrupts and execptions needed to support?
-         1. [ ] Just implement Exception for now?
-            1. [ ] Inst addr misalign
-            2. [ ] Inst illegal
-            3. [ ] breakpoint
-            4. [ ] load/store addr misalign
-            5. [ ] environment call m-mode
-            6. [ ] Also need to set epc
+   2. [x] Interrupt/Exception generator/handler
+      1. [x] Merge with the CSR unit to faciliate easy CSR values modification 
+      2. [x] What are the interrupts and execptions needed to support?
+         1. [x] Just implement Exception for now?
+            1. [x] Inst addr misalign
+            2. [x] Inst illegal
+            3. [x] environment breakpoint
+            4. [x] load/store addr misalign
+            5. [x] environment call m-mode
+            6. [x] Also need to set epc
             7. [x] ~~Also need to save context?~~ Unlike STM32, software saves the context
 3. [ ] Need to pass riscv isa tests in machine mode
 4. [ ] Auto tester for unit test asm from riscv-tests
@@ -67,10 +67,11 @@ A RISC-V RV32IMA+Zicsr FPGA implementation.
 ### Stage III: Peripheral
 
 1. [ ] Implement a memory bus to connect on-chip and off-chip RAM/ROM
-2. [ ] Implement programmer? To program the chip without quartus, like a real embedded system
-3. [ ] Debugger support? Like On-chip breakpoints
-4. [ ] Also other embedded peripheral
-5. [ ] Build a memory map
+2. [ ] `FENCE` and RISCV memory consistency model?
+3. [ ] Implement programmer? To program the chip without quartus, like a real embedded system
+4. [ ] Debugger support? Like On-chip breakpoints
+5. [ ] Also other embedded peripheral
+6. [ ] Build a memory map
 
 ## Test cases passed
 

@@ -75,10 +75,21 @@ module decoder (
                 _if.imm32 = { {20{inst_msb}}, i_inst.imm };
             end
 
-            // TODO Implement this?
-            // MISC_MEM: begin 
-                
-            // end
+            MISC_MEM: begin 
+                // TODO Implement FENCE inst?
+                // Just implement FENCE as NOP
+                // Which is addi x0, x0, 0
+                _if.alu_cmd.alu_insel = ALU_R2I;
+                _if.alu_cmd.aluop     = ALU_ADD;
+
+                _if.rf_cmd.wen      = 1'b1;
+                _if.rf_cmd.wdat_sel = ALU_OUT;
+                _if.rf_cmd.rs1      = '0;
+                _if.rf_cmd.rd       = '0;
+
+                _if.inst_type = ITYPE;
+                _if.imm32 = '0;
+            end
 
             OP_IMM: begin 
                 // rd = r1 + signext(imm)
@@ -228,7 +239,6 @@ module decoder (
                 _if.imm32 = { {11{inst_msb}}, j_inst.imm_20, j_inst.imm_19_12, j_inst.imm_11, j_inst.imm_10_1, 1'b0 };
             end
 
-            // TODO Implement later
             SYSTEM:  begin 
                 if (sfunct3 == PRIV) begin
                     if (i_inst.rs1 != '0 || i_inst.rd != '0) begin
@@ -290,23 +300,13 @@ module decoder (
                     end
                 end
                 else begin
-                    // TODO Handling illegal inst
                     _if.dec_exception_event.inst_illegal = 1'b1;
                 end
             end
 
             default: begin
-                // TODO Unrecognized opcode, might need to raise excception
-                // Right now just treated as NOP
-                // r0 = r0 + 0
-                _if.alu_cmd.alu_insel = ALU_R2I;
-                _if.alu_cmd.aluop     = ALU_ADD;
-
-                _if.rf_cmd.wen      = 1'b1;
-                _if.rf_cmd.wdat_sel = ALU_OUT;
-
-                _if.inst_type = ITYPE;
-                _if.imm32 = '0;
+                // Raise illegal inst excception
+                _if.dec_exception_event.inst_illegal = 1'b1;
             end
         endcase
     end
