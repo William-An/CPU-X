@@ -21,6 +21,7 @@ interface exception_if;
     word_t current_pc;          // Used to set epc register if necessary
 
     word_t epc_value;           // PC of the exception instruction
+    logic xret_enable;          // The current inst is an xRET (MRET/SRET) inst (but MRET only for now)
     word_t trap_handler_addr;   // from mtvec
     logic trap_enable;          // ORing all the flags
 
@@ -36,11 +37,13 @@ interface exception_if;
                                 dec_exception_event,
                                 current_pc,
                         output  epc_value,
+                                xret_enable,
                                 trap_handler_addr,
                                 trap_enable);
     
     // Module that consume the processed signals
     modport consumer (input     epc_value,
+                                xret_enable,
                                 trap_handler_addr,
                                 trap_enable);
 endinterface //exception_if

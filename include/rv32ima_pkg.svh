@@ -81,8 +81,10 @@ package rv32ima_pkg;
 
     // System PRIV instructions funct12
     typedef enum logic [FUNCT12_W - 1:0] { 
-        ECALL        = 12'b000000000000,
-        EBREAK       = 12'b000000000001
+        ECALL   = 12'b000000000000,
+        EBREAK  = 12'b000000000001,
+        MRET    = 12'b001100000010,
+        WFI     = 12'b000100000101
     } system_funct12_t;
 
     // Load and store width funct3
@@ -247,9 +249,20 @@ package rv32ima_pkg;
     } ram_state_t;
 
     // csr cmd packet
+    typedef enum logic[3:0] {
+        MRET_OP     = 4'b0000,
+        SRET_OP     = 4'b0001,
+        CSRRW_OP    = {1'b1, CSRRW},
+        CSRRS_OP    = {1'b1, CSRRS},
+        CSRRC_OP    = {1'b1, CSRRC},
+        CSRRWI_OP   = {1'b1, CSRRWI},
+        CSRRSI_OP   = {1'b1, CSRRSI},
+        CSRRCI_OP   = {1'b1, CSRRCI}
+    } csr_opcode_t;
+
     typedef struct packed {
         logic [11:0]    index;  // CSR register index
-        system_funct3_t opcode; // CSR opcode
+        csr_opcode_t    opcode; // CSR opcode
         logic           valid;  // The current instruction is a valid CSR inst
         logic           ren;    // CSR register ren, whether to read from CSR register
         logic           wen;    // CSR register wen, whether to write to CSR register

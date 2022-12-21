@@ -83,6 +83,7 @@ module csr_exception (
         cause_code = '0;
         trap_value = '0;
         _excep_if.epc_value = csr[PHY_CSR_MEPC];
+        _excep_if.xret_enable = 1'b0;
         _excep_if.trap_handler_addr = mtvec_base_addr;   // Default
         exception_hit = _excep_if.inst_fetch_exception_event.inst_misalign | 
                         _excep_if.ldst_exception_event.load_addr_misalign |
@@ -147,7 +148,24 @@ module csr_exception (
         else if (_if.csr_cmd.valid == 1'b1) begin  // Else perform normal operation
             // Perform atomic swap and bit set/clear
             casez (_if.csr_cmd.opcode)
-                CSRRW: begin
+                MRET_OP: begin
+                    // First need to update privilege bits in mstatus
+                    // When executing an xRET instruction, supposing xPP holds the value y, 
+                    //  xIE is set to xPIE; 
+                    // The privilege mode is changed to y; 
+                    // xPIE is set to 1; 
+                    // and xPP is set to the least-privileged supported
+                    // mode (U if U-mode is implemented, else M). 
+                    // If xPP̸=M, xRET also sets MPRV=0. (since only M-mode is supported, MPP = M-mode)
+                    next_csr[PHY_CSR_MSTATUS][MSTATUS_MIE_BIT] = csr[PHY_CSR_MSTATUS][MSTATUS_MPIE_BIT];
+                    next_csr[PHY_CSR_MSTATUS][MSTATUS_MPIE_BIT] = 1'b1;
+                    next_csr[PHY_CSR_MSTATUS][MSTATUS_MPP_BIT1:MSTATUS_MPP_BIT0] = MSTATUS_xPP_M_MODE;
+
+                    // Now notify the PC through branch resolver that we have a
+                    // EPC to jump back to 
+                    _excep_if.xret_enable = 1'b1;
+                end
+                CSRRW_OP: begin
                     // Atomically swap the CSR with the register value
                     // And output the old CSR value
                     if (_if.csr_cmd.ren) begin
@@ -161,7 +179,7 @@ module csr_exception (
                         _if.csr_val = '0; 
                     end
                 end
-                CSRRS: begin
+                CSRRS_OP: begin
                     // Atomically set the CSR bits indicated by
                     // the register
                     // And output the old CSR value
@@ -173,7 +191,7 @@ module csr_exception (
                         _if.csr_val = csr[csr_psel];
                     end
                 end
-                CSRRC: begin
+                CSRRC_OP: begin
                     // Atomically clear the CSR bits indicated by
                     // the register
                     // And output the old CSR value
@@ -185,7 +203,7 @@ module csr_exception (
                         _if.csr_val = csr[csr_psel];
                     end
                 end
-                CSRRWI: begin
+                CSRRWI_OP: begin
                     // Atomically swap the CSR with the uimm value
                     // And output the old CSR value
                     if (_if.csr_cmd.ren) begin
@@ -199,7 +217,7 @@ module csr_exception (
                         _if.csr_val = '0; 
                     end
                 end
-                CSRRSI: begin
+                CSRRSI_OP: begin
                     // Atomically set the CSR bits indicated by
                     // the uimm32
                     // And output the old CSR value
@@ -211,7 +229,7 @@ module csr_exception (
                         _if.csr_val = csr[csr_psel];
                     end
                 end
-                CSRRCI: begin
+                CSRRCI_OP: begin
                     // Atomically clear the CSR bits indicated by
                     // the uimm32 value
                     // And output the old CSR value

@@ -106,6 +106,12 @@ module datapath #(
 		dpif.dmem_store 	= rfif0.rdat2;
 		dpif.dmem_addr		= aif0.out;
 		dpif.dmem_width 	= decif0.dmem_cmd.dmem_width;
+		LDST_Addr_Misalign_Checker(.width(dpif.dmem_width),
+								   .addr(dpif.dmem_addr),
+								   .ren(decif0.dmem_cmd.dmem_ren),
+								   .wen(decif0.dmem_cmd.dmem_wen),
+								   .load_misalign(exceptionif0.ldst_exception_event.load_addr_misalign),
+								   .store_amo_misalign(exceptionif0.ldst_exception_event.store_amo_addr_misalign));
 
 		// Register this signal to avoid self-loop between dmem_wen and dhit
 		if (dpif.dhit) begin
@@ -167,6 +173,34 @@ module datapath #(
 	regfile 				rf0(rfif0);
 	csr_exception			csr_exception0(csrif0, exceptionif0);
 	alu 					alu0(aif0);
-	branch_resolver 		br(brif0);
+	branch_resolver 		br(brif0, exceptionif0);
 
 endmodule
+
+task LDST_Addr_Misalign_Checker;
+	input logic [LDST_WIDTH_W - 1:0]  width;
+	input word_t addr;
+	input logic ren;
+	input logic wen;
+	output logic load_misalign;
+	output logic store_amo_misalign;
+	logic misalign;
+	begin
+		load_misalign = 1'b0;
+		store_amo_misalign = 1'b0;
+		misalign = 1'b0;
+
+		// Just check the last 2 bits of width
+		// Since the first bit is whether to sign extend or not
+		casez(width[1:0])
+			2'b00: misalign = 1'b0;
+			2'b01: misalign = addr[0] == 0;
+			2'b10: misalign = addr[1:0] == 2'b0;
+			2'b11: misalign = 1'b1;	// RV32I does not contain inst supporting this
+		endcase
+
+		load_misalign = ren & misalign;
+		// Just store misalign now, no AMO support
+		store_amo_misalign = wen & misalign;
+	end
+endtask

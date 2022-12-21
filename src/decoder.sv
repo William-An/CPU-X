@@ -39,6 +39,7 @@ module decoder (
         _if.imm32 = '0;
         _if.csr_cmd = '0;
         _if.csr_uimm = '0;
+        _if.dec_exception_event = '0;
 
         // Casting
         r_inst = r_type'(_if.inst);
@@ -229,10 +230,46 @@ module decoder (
 
             // TODO Implement later
             SYSTEM:  begin 
-                if (sfunct3 != PRIV && sfunct3 != PRIVM) begin
+                if (sfunct3 == PRIV) begin
+                    if (i_inst.rs1 != '0 || i_inst.rd != '0) begin
+                        // All inst in this class should have these
+                        // two fields set to zeros
+                        _if.dec_exception_event.inst_illegal = 1'b1;
+                    end
+                    else begin
+                        casez (system_funct12_t'(i_inst.imm)) 
+                            ECALL: _if.dec_exception_event.ecall = 1'b1;
+                            EBREAK: _if.dec_exception_event.ebreak = 1'b1;
+                            MRET: begin
+                                // inform CSR unit that this is a MRET instruction
+                                _if.csr_cmd.opcode = MRET_OP;
+                                _if.csr_cmd.valid = 1'b1;
+
+                                // Return to epc is handled by csr_exception unit 
+                            end
+                            WFI: begin
+                                // Just implement WFI as NOP
+                                // Which is addi x0, x0, 0
+                                _if.alu_cmd.alu_insel = ALU_R2I;
+                                _if.alu_cmd.aluop     = ALU_ADD;
+
+                                _if.rf_cmd.wen      = 1'b1;
+                                _if.rf_cmd.wdat_sel = ALU_OUT;
+                                _if.rf_cmd.rs1      = '0;
+                                _if.rf_cmd.rd       = '0;
+
+                                _if.inst_type = ITYPE;
+                                _if.imm32 = '0;
+                            end
+                            default: _if.dec_exception_event.inst_illegal = 1'b1;
+                        endcase
+                    end
+                end
+                else if (sfunct3 != PRIV && sfunct3 != PRIVM) begin
                     // Focus on CSRR instructions
                     _if.csr_cmd.index = i_inst.imm;
-                    _if.csr_cmd.opcode = sfunct3;
+                    // For Zicsr instruction, the CSR unit opcode is {1'b1, sfunct3} 
+                    _if.csr_cmd.opcode = csr_opcode_t'({1'b1, sfunct3});
                     _if.csr_cmd.valid = 1'b1;
                     _if.csr_cmd.ren = 1'b1;
                     _if.csr_cmd.wen = 1'b1;
@@ -251,6 +288,10 @@ module decoder (
                         // bit clear
                         _if.csr_cmd.wen = 1'b0;
                     end
+                end
+                else begin
+                    // TODO Handling illegal inst
+                    _if.dec_exception_event.inst_illegal = 1'b1;
                 end
             end
 

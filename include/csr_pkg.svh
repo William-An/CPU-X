@@ -61,7 +61,6 @@ localparam MVENDORID_OFFSET_END_BIT = 6;
 localparam MSTATUS_xPP_M_MODE = 2'b11;
 localparam MSTATUS_xPP_S_MODE = 2'b01;
 localparam MSTATUS_xPP_U_MODE = 2'b00;
-localparam MSTATUS_MPP_M = 3;
 localparam MSTATUS_SD_BIT = 31;
 localparam MSTATUS_TSR_BIT = 22;
 localparam MSTATUS_TW_BIT = 21;

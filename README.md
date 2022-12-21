@@ -30,10 +30,11 @@ A RISC-V RV32IMA+Zicsr FPGA implementation.
          2. [x] Performance monitor could be optional
       2. [x] Instruction needed: Zicsr extension
       3. [ ] Instruction needed: machine-level privileged instructions
-         1. [ ] `ecall`
-         2. [ ] `ebreak`
-         3. [ ] `mret`: need to modify CSR `mstatus`
-         4. [ ] `wfi`: could be a nop
+         1. [X] `ecall`
+         2. [X] `ebreak`
+         3. [x] `mret`: need to modify CSR `mstatus`
+         4. [ ] `fence`
+         5. [X] `wfi`: could be a nop
       4. [ ] CSR R/W permission protection, check `index[11:10]` bits
       5. [ ] CSR fields WARL, WLRL protection
       6. [x] Need to determine what additional signals needed to the CSR module
