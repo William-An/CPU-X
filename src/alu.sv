@@ -26,14 +26,14 @@ module alu (
         casez (_if.alu_op)
             ALU_ADD  : {_if.carry, _if.out} = {in1_msb, _if.in1} + {in2_msb, _if.in2};
             ALU_SUB  : {_if.carry, _if.out} = {in1_msb, _if.in1} - {in2_msb, _if.in2};
-            ALU_SLT  : _if.out = signed'(_if.in1) <  signed'(_if.in2) ? 32'b1 : 32'b0;
+            ALU_SLT  : _if.out = signed'(_if.in1) < signed'(_if.in2) ? 32'b1 : 32'b0;
             ALU_SLTU : _if.out = unsigned'(_if.in1) < unsigned'(_if.in2) ? 32'b1 : 32'b0;
             ALU_AND  : _if.out = _if.in1 & _if.in2;
             ALU_OR   : _if.out = _if.in1 | _if.in2;
             ALU_XOR  : _if.out = _if.in1 ^ _if.in2;
             ALU_SLL  : _if.out = _if.in1 << _if.in2[4:0];
             ALU_SRL  : _if.out = _if.in1 >> _if.in2[4:0];
-            ALU_SRA  : _if.out = _if.in1 >>> _if.in2[4:0];
+            ALU_SRA  : _if.out = signed'(_if.in1) >>> _if.in2[4:0];
             ALU_MUL  : _if.out = _if.in1 * _if.in2;
             // Commented out to save synthesis space, also might try some efficient implementation
             // ALU_DIV : _if.out = _if.in1 / _if.in2;

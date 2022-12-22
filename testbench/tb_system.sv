@@ -41,7 +41,7 @@ module tb_system;
             $display("All test passed!");
         end
         else begin
-            $error("Test failed! Code: %d", dut.dp0.rf0.rf[3]);
+            $error("Test failed! Code: %d Test case: %d", dut.dp0.rf0.rf[3],  dut.dp0.rf0.rf[3] >> 1);
         end
         $stop;
 
