@@ -15,6 +15,7 @@
 interface cpu_ram_if (input ram_clk, input nrst);
     import rv32ima_pkg::*;
 
+    // TODO Make the following signal a RAM event packet
     word_t ram_addr;
     word_t ram_store;
     word_t ram_load;
@@ -31,6 +32,10 @@ interface cpu_ram_if (input ram_clk, input nrst);
     modport ram (
         input ram_clk, nrst, ram_addr, ram_store, ram_ren, ram_wen, ram_width,
         output ram_load, ram_state
+    );
+
+    modport tb (
+        input ram_load, ram_state, ram_addr, ram_ren, ram_wen
     );
 
 

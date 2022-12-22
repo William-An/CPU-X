@@ -37,17 +37,17 @@ module ram #(
 
     always_comb begin: RAM_NEXT
         next_lat_count = lat_count;
-        n_ram_rdy = 1'b0;
+        n_ram_rdy = ram_rdy;
 
+        _if.ram_load = 32'hdeadbeef;
         // RAM state logic
-        
-
         if (ram_rdy && lat_count >= LAT) begin
             // If we have ram ready, means we are in an ongoing request
             // If the the latency is reached, we are good to send the data
             _if.ram_state = RAM_DATA;
             n_ram_rdy = 1'b0;
             next_lat_count = '0;
+            _if.ram_load = REORDER_DATA == 1'b1 ? {tmp_data[7:0], tmp_data[15:8], tmp_data[23:16], tmp_data[31:24]} : tmp_data;
         end
         else begin
             casez ({_if.ram_wen, _if.ram_ren, _if.nrst})
@@ -91,6 +91,5 @@ module ram #(
         .q(tmp_data)
     );
 
-    assign _if.ram_load = REORDER_DATA == 1'b1 ? {tmp_data[7:0], tmp_data[15:8], tmp_data[23:16], tmp_data[31:24]} : tmp_data;
     
 endmodule

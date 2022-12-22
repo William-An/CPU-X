@@ -11,6 +11,7 @@
 
 `include "rv32ima_pkg.svh"
 `include "datapath_if.svh"
+`include "system_if.svh"
 `include "cpu_ram_if.svh"
 
 import rv32ima_pkg::*;
@@ -21,7 +22,7 @@ module system #(
 (
 	input clk,
 	input nrst,
-	output word_t data
+	system_if.system _if
 );
 	
 	// Testing synthesis size
@@ -39,12 +40,21 @@ module system #(
 		.nrst(nrst)
 	);
 
-	assign data = crif.ram_load;
+	// Connecting ram signals to system
+	always_comb begin
+		_if.ram_load	= crif.ram_load;
+		_if.ram_store	= crif.ram_store;
+		_if.ram_state	= crif.ram_state;
+		_if.ram_addr	= crif.ram_addr;
+		_if.ram_ren		= crif.ram_ren;
+		_if.ram_wen		= crif.ram_wen;
+	end
 
-	// Module
+	// Modules
 	datapath #(.PC_INIT(PC_INIT)) dp0(dpif);
 	
-	// TODO: memory controller/arbiter
+	// Memory controller/arbiter
+	// TODO: extend to a memory bus controller?
 	memory_controller mc(dpif, crif);
 
 	// Onchip ram, for offchip, initialize an offchip mem controller?
