@@ -108,6 +108,7 @@ module datapath #(
 		dpif.dmem_width 	= decif0.dmem_cmd.dmem_width;
 		LDST_Addr_Misalign_Checker(.width(dpif.dmem_width),
 								   .addr(dpif.dmem_addr),
+								   .served(served_data),
 								   .ren(decif0.dmem_cmd.dmem_ren),
 								   .wen(decif0.dmem_cmd.dmem_wen),
 								   .load_misalign(exceptionif0.ldst_exception_event.load_addr_misalign),
@@ -180,6 +181,7 @@ endmodule
 task LDST_Addr_Misalign_Checker;
 	input logic [LDST_WIDTH_W - 1:0]  width;
 	input word_t addr;
+	input logic served;	// Whether the LDST has been served (or checked) in the inst span, so no check
 	input logic ren;
 	input logic wen;
 	output logic load_misalign;
@@ -198,7 +200,7 @@ task LDST_Addr_Misalign_Checker;
 			2'b10: misalign = addr[1:0] != 2'b0;	// word (4 bytes)
 			2'b11: misalign = 1'b1;	// RV32I does not contain inst supporting this
 		endcase
-
+		misalign &= ~served;
 		load_misalign = ren & misalign;
 		// Just store misalign now, no AMO support
 		store_amo_misalign = wen & misalign;

@@ -28,13 +28,14 @@ module tb_system;
         repeat (3) @(posedge tb_clk);
         tb_nrst = 1'b1;
 
-        // Break on ecall and 50 clock cycles
+        // Break on exception and 50 clock cycles
         // Then check x3 register value
         // Break on if x30 and x31 contains value 0xBEEFBEEF
-        while (!(dut.dp0.exceptionif0.dec_exception_event.ecall == 1'b1)) begin
+        while (!(dut.dp0.csr_exception0.exception_hit == 1'b1)) begin
             @(posedge tb_clk);
             tb_cycles++;
         end
+        $display("ECALL PC: 0x%x", dut.dp0.pcif0.curr_pc);
         repeat (50) @(posedge tb_clk);
         if (dut.dp0.rf0.rf[3] == 32'd1) begin
             $display("All test passed!");
