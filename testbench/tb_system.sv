@@ -1,19 +1,42 @@
 `timescale 1ns/1ns
 
 `include "rv32ima_pkg.svh"
+`include "system_if.svh"
 
 module tb_system;
     import rv32ima_pkg::*;
 	
     localparam CLK_PERIOD = 10;
-    // localparam PC_INIT = 32'h80000000;
     localparam PC_INIT = -4;
+    localparam TO_HOST_ADDR = 32'h1000;
     logic tb_clk;
     logic tb_nrst;
     word_t tb_data;
     int unsigned tb_cycles;
 
-    system #(.PC_INIT(PC_INIT)) dut(tb_clk, tb_nrst, tb_data);
+    word_t tb_ram_addr;
+    word_t tb_ram_store;
+    word_t tb_ram_load;
+    logic  tb_ram_ren;
+    logic  tb_ram_wen;
+    logic[1:0] tb_ram_state;
+
+    system_if tb_sysif0();
+
+    // TODO Separate MAPPED and RTL simulation
+    // # In gate-level synthesis, it loses information on the signal names
+    // system #(.PC_INIT(PC_INIT)) dut(tb_clk, tb_nrst, tb_data);
+`ifdef MAPPED
+    system dut(tb_clk, tb_nrst, 
+                tb_sysif0.ram_wen, 
+                tb_sysif0.ram_ren,
+                tb_sysif0.ram_addr, 
+                tb_sysif0.ram_state, 
+                tb_sysif0.ram_store, 
+                tb_sysif0.ram_load);
+`else
+    system #(.PC_INIT(PC_INIT)) dut(tb_clk, tb_nrst, tb_sysif0);
+`endif
 
     always #CLK_PERIOD tb_clk = ~tb_clk;
 
@@ -28,24 +51,21 @@ module tb_system;
         repeat (3) @(posedge tb_clk);
         tb_nrst = 1'b1;
 
-        // Break on exception and 50 clock cycles
-        // Then check x3 register value
-        // Break on if x30 and x31 contains value 0xBEEFBEEF
-        while (!(dut.dp0.csr_exception0.exception_hit == 1'b1)) begin
+        // Listen on TOHOST memory region
+        while ((tb_sysif0.ram_addr != TO_HOST_ADDR) || (tb_sysif0.ram_wen != 1'b1)) begin
             @(posedge tb_clk);
             tb_cycles++;
         end
-        $display("ECALL PC: 0x%x", dut.dp0.pcif0.curr_pc);
-        repeat (50) @(posedge tb_clk);
-        if (dut.dp0.rf0.rf[3] == 32'd1) begin
+
+        // Read the RAM store value
+        if (tb_sysif0.ram_store == 32'd1) begin
             $display("All test passed!");
         end
         else begin
-            $error("Test failed! Code: %d Test case: %d", dut.dp0.rf0.rf[3],  dut.dp0.rf0.rf[3] >> 1);
+            $error("Test failed! Code: %d Test case: %d", tb_sysif0.ram_store, tb_sysif0.ram_store >> 1);
         end
         $stop;
 
-        // TODO tohost memory?
         // TODO Dump memory
     end
 endmodule
