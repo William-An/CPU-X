@@ -92,7 +92,7 @@ module datapath #(
 		csrif0.csr_input.reg_val = rfif0.rdat1;
 
 		// Connecting signals to exception control
-		exceptionif0.inst_fetch_exception_event.inst_misalign = pcif0.curr_pc[1:0] == 2'b0;	// RV32, instruction at 4 byte boundary
+		exceptionif0.inst_fetch_exception_event.inst_misalign = pcif0.curr_pc[1:0] != 2'b0;	// RV32, instruction at 4 byte boundary
 		exceptionif0.ldst_exception_event = '0;
 		exceptionif0.dec_exception_event = decif0.dec_exception_event;
 		exceptionif0.current_pc = pcif0.curr_pc;
@@ -193,9 +193,9 @@ task LDST_Addr_Misalign_Checker;
 		// Just check the last 2 bits of width
 		// Since the first bit is whether to sign extend or not
 		casez(width[1:0])
-			2'b00: misalign = 1'b0;
-			2'b01: misalign = addr[0] == 0;
-			2'b10: misalign = addr[1:0] == 2'b0;
+			2'b00: misalign = 1'b0;					// Single byte
+			2'b01: misalign = addr[0] != 0;			// Half word (2 bytes)
+			2'b10: misalign = addr[1:0] != 2'b0;	// word (4 bytes)
 			2'b11: misalign = 1'b1;	// RV32I does not contain inst supporting this
 		endcase
 
