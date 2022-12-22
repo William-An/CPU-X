@@ -25,9 +25,6 @@ src/ram_internal.cnx
 # TCL script
 *.tcl
 
-# Scripts
-scripts/
-
 # VSCode
 .vscode/
 

@@ -51,7 +51,10 @@ A RISC-V RV32IMA+Zicsr FPGA implementation.
             6. [x] Also need to set epc
             7. [x] ~~Also need to save context?~~ Unlike STM32, software saves the context
 3. [ ] Need to pass riscv isa tests in machine mode
-   1. [ ] Following cases not passed as it requires over 0x2000 bytes of memory
+   1. [x] RTL Level
+   2. [ ] GATE Level
+      1. [ ] Let TB listen on the RAM signals, waiting for writes to toHOST memory region with the value
+   3. [ ] Following cases not passed as it requires over 0x2000 bytes of memory
       1. [ ] `rv32ui-p-fence_i`
       2. [ ] `rv32io-p-lb` 
       3. [ ] `rv32io-p-lbu` 
@@ -82,19 +85,12 @@ A RISC-V RV32IMA+Zicsr FPGA implementation.
 4. [ ] Debugger support? Like On-chip breakpoints
 5. [ ] Also other embedded peripheral
 6. [ ] Build a memory map
-
-## Test cases passed
-
-1. [x] rv32ui-p-add
-2. [ ] rv32ui-p-
+7. [ ] Coverage report?
 
 ## Make commands
 
 1. RISC-V Testsuite
    1. Use `make benchmark_BENCHMARK` or `make isa_ISATEST` to generate the `meminit.hex`
-   2. Cannot use right now as it need some other instructions and special registers implemented (crrs)
-2. asm
-   1. Own unitest file, very much similar to the riscv official one
 
 ## References
 
