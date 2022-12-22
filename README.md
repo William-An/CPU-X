@@ -51,6 +51,16 @@ A RISC-V RV32IMA+Zicsr FPGA implementation.
             6. [x] Also need to set epc
             7. [x] ~~Also need to save context?~~ Unlike STM32, software saves the context
 3. [ ] Need to pass riscv isa tests in machine mode
+   1. [ ] Following cases not passed as it requires over 0x2000 bytes of memory
+      1. [ ] `rv32ui-p-fence_i`
+      2. [ ] `rv32io-p-lb` 
+      3. [ ] `rv32io-p-lbu` 
+      4. [ ] `rv32io-p-lh`
+      5. [ ] `rv32io-p-lhu`
+      6. [ ] `rv32io-p-lw`
+      7. [ ] `rv32io-p-sb`
+      8. [ ] `rv32io-p-sh`
+      9. [ ] `rv32io-p-sw`
 4. [ ] Auto tester for unit test asm from riscv-tests
     1. Noted the `benchmarks` tests are with rv64?
     2. Can use ecall to pause on?
