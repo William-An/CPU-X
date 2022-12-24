@@ -50,32 +50,22 @@ A RISC-V RV32IMA+Zicsr FPGA implementation.
             5. [x] environment call m-mode
             6. [x] Also need to set epc
             7. [x] ~~Also need to save context?~~ Unlike STM32, software saves the context
-3. [ ] Need to pass riscv isa tests in machine mode
+3. [x] Need to pass riscv isa tests in machine mode
    1. [x] RTL Level
-   2. [ ] GATE Level
-      1. [ ] Let TB listen on the RAM signals, waiting for writes to toHOST memory region with the value
-   3. [ ] Following cases not passed as it requires over 0x2000 bytes of memory
-      1. [ ] `rv32ui-p-fence_i`
-      2. [ ] `rv32io-p-lb` 
-      3. [ ] `rv32io-p-lbu` 
-      4. [ ] `rv32io-p-lh`
-      5. [ ] `rv32io-p-lhu`
-      6. [ ] `rv32io-p-lw`
-      7. [ ] `rv32io-p-sb`
-      8. [ ] `rv32io-p-sh`
-      9. [ ] `rv32io-p-sw`
-4. [ ] Auto tester for unit test asm from riscv-tests
-    1. Noted the `benchmarks` tests are with rv64?
-    2. Can use ecall to pause on?
-    3. Use different linker script for spike and the systemverilog one?
-    4. Implement Machine-Level CSR and corresponding instructions after pipelined CPU passed
-        1. Refer to the privileged ISA manual
-        2. At least the Machine and the User side?
+   2. [x] GATE Level
+      1. [x] Let TB listen on the RAM signals, waiting for writes to toHOST memory region with the value
+   3. [ ] Multi-cycle latency RAM
+      1. [ ] For odd cycles latency, multiple ihit/dhit will occur
+      2. [x] Need to update processor state only once in a multi-cycle wait for inst fetch
+         1. [x] By updating CSR and regfile only when ihit for regular inst
+         2. [x] Update regfile for load operation only when dhit
+4. [x] Auto tester for unit test asm from riscv-tests
 
 ### Stage II: Pipeline
 
 1. [ ] Implement pipeline CPU with machine-mode
 2. [ ] Make sure the exception/interrupt are precise
+3. [ ] Group interface signals into event packet struct, like instruction fetch, memory_ldst
 
 ### Stage III: Peripheral
 

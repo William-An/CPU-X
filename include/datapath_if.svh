@@ -20,6 +20,7 @@ interface datapath_if (input clk, input nrst);
     logic   ihit;       // Data ready
     logic   imem_ren;   // Read from dmem enable
 
+    // TODO Group these into an event packet struct?
     logic   dhit;       // Data ready
     logic   dmem_wen;   // Write to dmem enable
     logic   dmem_ren;   // Read from dmem enable

@@ -59,10 +59,10 @@ module tb_system;
 
         // Read the RAM store value
         if (tb_sysif0.ram_store == 32'd1) begin
-            $display("All test passed!");
+            $display("All tests passed after %d cycles!", tb_cycles);
         end
         else begin
-            $error("Test failed! Code: %d Test case: %d", tb_sysif0.ram_store, tb_sysif0.ram_store >> 1);
+            $error("Test failed! Code: %d Test case: %d Cycles: %ld", tb_sysif0.ram_store, tb_sysif0.ram_store >> 1, tb_cycles);
         end
         $stop;
 

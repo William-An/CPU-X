@@ -41,7 +41,7 @@ module ram #(
 
         _if.ram_load = 32'hdeadbeef;
         // RAM state logic
-        if (ram_rdy && lat_count >= LAT) begin
+        if (ram_rdy && lat_count > LAT) begin
             // If we have ram ready, means we are in an ongoing request
             // If the the latency is reached, we are good to send the data
             _if.ram_state = RAM_DATA;
@@ -78,6 +78,12 @@ module ram #(
             2'b10: byteen = 4'b1111;
             default: byteen = 4'b1111;
         endcase
+        casez (_if.ram_width[1:0])
+			2'b00: byteen = 4'b1 << _if.ram_addr[1:0];
+			2'b01: byteen = 4'b11 << {_if.ram_addr[1], 1'b0};
+			2'b10: byteen = 4'b1111;
+			default: byteen = 4'b1111;
+		endcase
     end
 
     // TODO: can implement both on-chip ram and off-chip ram?

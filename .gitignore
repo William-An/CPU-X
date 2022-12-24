@@ -7,6 +7,7 @@ output_files/
 *.qsf
 *.qws
 *.bak
+.qsys_edit/
 
 # QuestaSim FPGA starter edition
 simulation/
@@ -33,6 +34,7 @@ riscv-tests/
 *.riscv
 *.riscv_expand_macro
 *.hex
+*.mif
 *.dump
 *.spike
 *.spike_dump
@@ -40,4 +42,5 @@ riscv-tests/
 
 # Misc
 devNote.md
+asm/
 

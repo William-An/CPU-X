@@ -2,7 +2,10 @@
 RISCV_TEST_DIR 		:= riscv-tests
 OWN_TEST_DIR		:= asm
 HEX_INIT_FILE		:= meminit.hex
+MIF_INIT_FILE		:= meminit.mif
 RISCV_ELF_PREFIX	:= riscv64-unknown-elf
+OBJCOPY_FLAGS		:= --only-section=.text.startup --only-section=.text.init \
+					   --only-section=.data -v --set-start 0x00 --reverse-bytes=4 -O ihex
 
 BENCHMARKS_DIR	:= $(RISCV_TEST_DIR)/benchmarks
 UNIT_TEST_DIR	:= $(RISCV_TEST_DIR)/isa
@@ -34,15 +37,16 @@ gate_sim: build
 		$(MAKE) -s gate_level_sim_$${test}; \
 	done
 
+# Adding --reverse-bytes=4 since RISCV is little endian while intel hex is big endian
 # RISCV benchmark
 benchmark_%: $(BENCHMARKS_DIR)/%.riscv
-	@$(RISCV_ELF_PREFIX)-objcopy -v --set-start 0x00 -O ihex $< tmp.hex > /dev/null
+	@$(RISCV_ELF_PREFIX)-objcopy $(OBJCOPY_FLAGS) $< tmp.hex > /dev/null
 	@srec_cat tmp.hex -intel -output $(HEX_INIT_FILE) -Intel -line-length=20
 	@rm tmp.hex
 
 # RISCV ISA unit test
 isa_%: $(UNIT_TEST_DIR)/%
-	@$(RISCV_ELF_PREFIX)-objcopy -v --set-start 0x00 -O ihex $< tmp.hex > /dev/null
+	@$(RISCV_ELF_PREFIX)-objcopy $(OBJCOPY_FLAGS) $< tmp.hex > /dev/null
 	@srec_cat tmp.hex -intel -output $(HEX_INIT_FILE) -Intel -line-length=20
 	@rm tmp.hex
 
@@ -61,7 +65,7 @@ rtl_sim_%: isa_% update_meminit_silent
 	@printf "\033[0;33m[-] Simulating $@..."
 	@if quartus_sh -t $(SIMULATION_SCRIPT) --rtl_sim \
 		$(PROJECT) $(REVISION) $(QSHELL_SIMULATION_FLAGS) \
-		| grep -q "All test passed!"; then \
+		| grep -q "All tests passed"; then \
 		printf "\r\033[0;32m[+] RTL Sim Passed for $* test\n"; \
 	else \
 		printf "\r\033[0;31m[!] RTL Sim Failed for $* test\n"; \
@@ -71,7 +75,7 @@ gate_level_sim_%: isa_% update_meminit_silent
 	@printf "\033[0;33m[-] Simulating $@..."
 	@if quartus_sh -t $(SIMULATION_SCRIPT) \
 		$(PROJECT) $(REVISION) $(QSHELL_SIMULATION_FLAGS) \
-		| grep -q "All test passed!"; then \
+		| grep -q "All tests passed"; then \
 		printf "\r\033[K\033[0;32m[+] Gate level Sim Passed for $* test\n"; \
 	else \
 		printf "\r\033[0;31m[!] Gate level Sim Failed for $* test\n"; \
