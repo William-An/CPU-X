@@ -58,6 +58,6 @@ module system #(
 	memory_controller mc(dpif, crif);
 
 	// Onchip ram, for offchip, initialize an offchip mem controller?
-	ram	#(.REORDER_DATA(1'b0), .LAT(4'd2)) ram0(crif);
+	ram	#(.REORDER_DATA(1'b0), .LAT(4'd0)) ram0(crif);
 
 endmodule

@@ -55,8 +55,16 @@ A RISC-V RV32IMA+Zicsr FPGA implementation.
    2. [x] GATE Level
       1. [x] Let TB listen on the RAM signals, waiting for writes to toHOST memory region with the value
    3. [ ] Multi-cycle latency RAM
-      1. [ ] For odd cycles latency, multiple ihit/dhit will occur
-      2. [x] Need to update processor state only once in a multi-cycle wait for inst fetch
+      1. [x] 0 cycle latency
+      2. [x] 2 cycles latency
+      3. [x] 3 cycles latency
+      4. [x] 7 cycles latency
+      5. [x] 10 cycles latency
+      6. [x] For odd cycles latency, dhit/ihit will need hit twice
+         1. Since the first hit is on the failing edge of CPU clock (RAM clk is twice as fast as the CPU clk)
+         2. So the effective latency will be double if we don't sync the RAM ack with CPU clock
+         3. Fix this in later iteration since we don't want single cycle to be burdened with performance. 
+      7. [x] Need to update processor state only once in a multi-cycle wait for inst fetch
          1. [x] By updating CSR and regfile only when ihit for regular inst
          2. [x] Update regfile for load operation only when dhit
 4. [x] Auto tester for unit test asm from riscv-tests
