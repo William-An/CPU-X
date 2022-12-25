@@ -2,6 +2,178 @@
 
 A RISC-V RV32IMA+Zicsr FPGA implementation.
 
+## Mini-Bus protocol
+
+Mini-Bus is a simple bus protocol used to connect the CPU core with other components like memory and memory-mapped peripherals in this project.
+
+### Mini-Bus signals
+
+- `clk`: bus clock
+- `nrst`: bus reset
+- `addr`: bus address signals, 32-bit
+- `wdata`: bus write data signals, 32-bit
+- `rdata`: bus read data signals, 32-bit
+- `width`: bus data width, 2-bit
+  - `00`: byte access
+  - `01`: half word access
+  - `10`: full word access
+- `ren`: bus read enable
+  - If set, signaling this request is a read request
+- `wen`: bus write enable
+  - If set, signaling this is a write request
+- `err`: bus master error signal
+  - Connect to the current slave device being selected
+- `ack`: bus master acknowledge
+  - If set, signaling the request is completed and master should read available data/start next request
+- Slave signals
+  - `selx`: bus slave x select signal
+    - Set based on the memory address assigned to each slave device
+  - `ackx`: bus slave x acknowledge signal
+  - `errx`: bus slave x error signal
+
+### Waveform examples
+
+#### Mini-Bus Write
+
+<div style="background-color: #EBEBEB">
+<script type="WaveDrom">
+{signal: [
+    ["Note",
+     {name: 'Title',		wave: "7................", data:["Mini-Bus master write to two slave devices"]},
+     {name: '',			wave: "3..4.5......2....", data:["Waiting nRST", "Write to S1", "Write to S2", "Free"]},
+     {name: 'Bus-phase',	wave: '2..343.....42....', data:['unknown', 'addr', 'data', 'addr', 'data', 'free']},
+     {},
+    ],
+    ["Global",
+      {name: 'clk', 		wave: 'P................'},
+      {name: 'nrst', 		wave: '101..............'},
+    ],
+    ["Master",
+      {name: 'addr', 		wave: 'x..3.3......x....', data:['addr1', 'addr2']},
+      {name: 'wdata', 	wave: 'x..4.4......x....', data: ['data1', 'data2']},
+      {name: 'rdata', 	wave: 'x................', data: []},
+      {name: 'ren', 		wave: '0................'},
+      {name: 'wen', 		wave: '0..101.....0.....'},
+      {name: 'ack', 		wave: '0...10.....10....'},
+    ],
+     ["Slave1",
+      {name: 'sel1', 		wave: '0..1.0...........'},
+      {name: 'addr', 		wave: 'x..3.3......x....', data:['addr1', 'addr2']},
+      {name: 'wdata', 	wave: 'x..4.4......x....', data: ['data1', 'data2']},
+      {name: 'rdata1', 	wave: 'x................', data: []},
+      {name: 'ren', 		wave: '0................'},
+      {name: 'wen', 		wave: '0..101.....0.....'},
+      {name: 'ack1', 		wave: '0...10...........'},
+    ],
+     ["Slave2",
+      {name: 'sel2', 		wave: '0....1......0....'},
+      {name: 'addr', 		wave: 'x..3.3......x....', data:['addr1', 'addr2']},
+      {name: 'wdata', 	wave: 'x..4.4......x....', data: ['data1', 'data2']},
+      {name: 'rdata2', 	wave: 'x................', data: []},
+      {name: 'ren', 		wave: '0................'},
+      {name: 'wen', 		wave: '0..101.....0.....'},
+      {name: 'ack2', 		wave: '0..........10....'},
+    ]
+  ]}
+</script>
+</div>
+
+#### Mini-Bus Read
+
+<div style="background-color: #EBEBEB">
+<script type="WaveDrom">
+{signal: [
+    ["Note",
+     {name: 'Title',		wave: "7................", data:["Mini-Bus master write to two slave devices"]},
+     {name: '',			wave: "3..4.5......2....", data:["Waiting nRST", "Write to S1", "Write to S2", "Free"]},
+     {name: 'Bus-phase',	wave: '2..343.....42....', data:['unknown', 'addr', 'data', 'addr', 'data', 'free']},
+     {},
+    ],
+    ["Global",
+      {name: 'clk', 		wave: 'P................'},
+      {name: 'nrst', 		wave: '101..............'},
+    ],
+    ["Master",
+      {name: 'addr', 		wave: 'x..3.3......x....', data:['addr1', 'addr2']},
+      {name: 'wdata', 	wave: 'x..4.4......x....', data: ['data1', 'data2']},
+      {name: 'rdata', 	wave: 'x................', data: []},
+      {name: 'width', 	wave: 'x..5.5......x....', data: ['width1', 'width2']},
+      {name: 'ren', 		wave: '0................'},
+      {name: 'wen', 		wave: '0..101.....0.....'},
+      {name: 'ack', 		wave: '0...10.....10....'},
+    ],
+     ["Slave1",
+      {name: 'sel1', 		wave: '0..1.0...........'},
+      {name: 'addr', 		wave: 'x..3.3......x....', data:['addr1', 'addr2']},
+      {name: 'wdata', 	wave: 'x..4.4......x....', data: ['data1', 'data2']},
+      {name: 'rdata1', 	wave: 'x................', data: []},
+      {name: 'width', 	wave: 'x..5.5......x....', data: ['width1', 'width2']},
+      {name: 'ren', 		wave: '0................'},
+      {name: 'wen', 		wave: '0..101.....0.....'},
+      {name: 'ack1', 		wave: '0...10...........'},
+    ],
+     ["Slave2",
+      {name: 'sel2', 		wave: '0....1......0....'},
+      {name: 'addr', 		wave: 'x..3.3......x....', data:['addr1', 'addr2']},
+      {name: 'wdata', 	wave: 'x..4.4......x....', data: ['data1', 'data2']},
+      {name: 'rdata2', 	wave: 'x................', data: []},
+      {name: 'width', 	wave: 'x..5.5......x....', data: ['width1', 'width2']},
+      {name: 'ren', 		wave: '0................'},
+      {name: 'wen', 		wave: '0..101.....0.....'},
+      {name: 'ack2', 		wave: '0..........10....'},
+    ]
+  ]}
+</script>
+</div>
+
+#### Mini-Bus read and write
+
+<div style="background-color: #EBEBEB">
+<script type="WaveDrom">
+{signal: [
+  ["Note",
+   {name: 'Title',		wave: "7...........................", data: ["Mini-Bus master read and write with two slave devices"]},
+   {name: '',			wave: "3..4.5......2.5....23..2....", data: ["Waiting nRST", "Read S1", "Write S2", "Free", "Write S1", "Free", "Read S2", "Free"]},
+   {name: 'Bus-phase',	wave: '2..343.....42.3...423.42....', data: ['unknown', 'addr', 'data', 'addr', 'data', 'free', 'addr', 'data', 'free', 'addr', 'data', 'free']},
+   {},
+  ],
+  ["Global",
+    {name: 'clk', 		wave: 'P...........................'},
+    {name: 'nrst', 		wave: '101.........................'},
+  ],
+  ["Master",
+    {name: 'addr', 		wave: 'x..3.3......x.3....x3..x....', data: ['addr1', 'addr2', 'addr3', 'addr4']},
+    {name: 'wdata', 	wave: 'x....4......x.4....x........', data: ['data2', 'data3']},
+    {name: 'rdata', 	wave: 'x...4x................4x....', data: ['data1', 'data4']},
+    {name: 'width', 	wave: 'x..5.5......x.5....x5..x....', data: ['width1', 'width2', 'width3', 'width4']},
+    {name: 'ren', 		wave: '0..10...............1.0.....'},
+    {name: 'wen', 		wave: '0....1.....0..1...0.........'},
+    {name: 'ack', 		wave: '0...10.....10.....10..10....'},
+  ],
+   ["Slave1",
+    {name: 'sel1', 		wave: '0..1.0........1....0........'},
+    {name: 'addr', 		wave: 'x..3.3......x.3....x3..x....', data: ['addr1', 'addr2', 'addr3', 'addr4']},
+    {name: 'wdata', 	wave: 'x....4......x.4....x........', data: ['data2', 'data3']},
+    {name: 'rdata1', 	wave: 'x...4x......................', data: ['data1']},
+    {name: 'width', 	wave: 'x..5.5......x.5....x5..x....', data: ['width1', 'width2', 'width3', 'width4']},
+    {name: 'ren', 		wave: '0..10...............1.0.....'},
+    {name: 'wen', 		wave: '0....1.....0..1...0.........'},
+    {name: 'ack1', 		wave: '0...10............10........'},
+  ],
+   ["Slave2",
+    {name: 'sel2', 		wave: '0....1......0.......1..0....'},
+    {name: 'addr', 		wave: 'x..3.3......x.3....x3..x....', data: ['addr1', 'addr2', 'addr3', 'addr4']},
+    {name: 'wdata', 	wave: 'x....4......x.4....x........', data: ['data2', 'data3']},
+    {name: 'rdata2', 	wave: 'x.....................4x....', data: ['data4']},
+   	{name: 'width', 	wave: 'x..5.5......x.5....x5..x....', data: ['width1', 'width2', 'width3', 'width4']},
+    {name: 'ren', 		wave: '0..10...............1.0.....'},
+    {name: 'wen', 		wave: '0....1.....0..1...0.........'},
+    {name: 'ack2', 		wave: '0..........10.........10....'},
+  ]
+]}
+</script>
+</div>
+
 ## TODO
 
 ### Stage I: SingleCycle
@@ -100,3 +272,9 @@ A RISC-V RV32IMA+Zicsr FPGA implementation.
 4. [Intel Quartus Lite](https://www.intel.com/content/www/us/en/software-kit/684215/intel-quartus-prime-lite-edition-design-software-version-21-1-for-linux.html)
    1. For linux
    2. Also if want to use the waveform simulator, need to register for a license
+
+
+<!-- Waveform render scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wavedrom/2.6.8/skins/default.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wavedrom/2.6.8/wavedrom.min.js" type="text/javascript"></script>
+<body onload="WaveDrom.ProcessAll()">
