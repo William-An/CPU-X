@@ -56,12 +56,6 @@ module ram_minibus (
 
     always_comb begin: BYTE_EN_MUX
         casez (_sif.req.width[1:0])
-            2'b00: byteen = 4'b0001;
-            2'b01: byteen = 4'b0011;
-            2'b10: byteen = 4'b1111;
-            default: byteen = 4'b1111;
-        endcase
-        casez (_sif.req.width[1:0])
 			2'b00: byteen = 4'b1 << _sif.req.addr[1:0];
 			2'b01: byteen = 4'b11 << {_sif.req.addr[1], 1'b0};
 			2'b10: byteen = 4'b1111;
