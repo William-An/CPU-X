@@ -19,12 +19,13 @@ module minibus_decoder #(
 ) (
     minibus_master_if.decoder _masterif,
     minibus_slave_if.decoder _slaveifs [SLAVE_COUNT],
-    slave_mem_map [SLAVE_COUNT - 1 : 0] slavemmaps
+    input slave_mem_map [SLAVE_COUNT-1:0] slavemmaps
 );
     // multiplex signals based on slavemmaps, assuming the
     // slavemmaps is of increasing order (i.e. slave[0] has lower addr than slave[1])
     generate
-        for (genvar i = 0; i < SLAVE_COUNT; i++) begin : MINIBUS_GEN
+        genvar i;
+        for (i = 0; i < SLAVE_COUNT; i++) begin : MINIBUS_GEN
             always_comb begin : MINIBUS_SLAVE_HANDLE
                 _slaveifs[i].sel = '0;
                 _slaveifs[i].req = _masterif.req;

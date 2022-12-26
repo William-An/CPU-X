@@ -19,24 +19,21 @@ package minibus_pkg;
 
     localparam DATA_WIDTH = 32;
     localparam ADDR_WIDTH = 32;
-    typedef logic [DATA_WIDTH - 1:0] word_t;
-    typedef logic [ADDR_WIDTH - 1:0] addr_t;
-    typedef logic [1:0] width_t;
     typedef struct packed {
-        addr_t addr_start;  // Slave memory starting address, inclusive
-        addr_t addr_end;    // Slave memory ending address, exclusive
+        logic [ADDR_WIDTH - 1:0] addr_start;  // Slave memory starting address, inclusive
+        logic [ADDR_WIDTH - 1:0] addr_end;    // Slave memory ending address, exclusive
     } slave_mem_map;
 
     typedef struct packed {
-        addr_t  addr;
-        word_t  wdata;
-        width_t width;
+        logic [ADDR_WIDTH - 1:0]  addr;
+        logic [DATA_WIDTH - 1:0]  wdata;
+        logic [1:0] width;
         logic   ren;
         logic   wen;
     } minibus_req_pack;
 
     typedef struct packed {
-        word_t  rdata;
+        logic [DATA_WIDTH - 1:0]  rdata;
         logic   ack;
         logic   err;
     } minibus_res_pack;

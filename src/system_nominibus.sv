@@ -3,7 +3,7 @@
  * Created:	12/22/2021
  * Author:	Weili An
  * Email:	an107@purdue.edu
- * Version:	1.1 Use minibus for peripherals
+ * Version:	1.0 Initial Design Entry
  * Description:	Top-level entry for the CPU implementation
  */
 
@@ -24,33 +24,30 @@ module system #(
 	input nrst,
 	system_if.system _if
 );
+	
+	// Testing synthesis size
+	logic cpu_clk;
+	always_ff @( posedge clk, negedge nrst ) begin : CPU_CLK
+		if (nrst == 1'b0)
+			cpu_clk <= 1'b0;
+		else
+			cpu_clk <= ~cpu_clk;
+	end
 
-	datapath_if dpif(clk, nrst);
-	minibus_master_if cpuif(
-		.clk(clk),
+	datapath_if dpif(cpu_clk, nrst);
+	cpu_ram_if	crif(
+		.ram_clk(clk),
 		.nrst(nrst)
 	);
-
-	minibus_slave_if ramif(
-		.clk(clk),
-		.nrst(nrst)
-	);
-
 
 	// Connecting ram signals to system
 	always_comb begin
-		_if.ram_load	= ramif.res.rdata;
-		_if.ram_store	= ramif.req.wdata;
-		_if.ram_addr	= ramif.req.addr;
-		_if.ram_ren		= ramif.req.ren;
-		_if.ram_wen		= ramif.req.wen;
-	end
-
-	// Single connection, no decoder needed
-	always_comb begin
-		ramif.req = cpuif.req;
-		ramif.sel = 1'b1;
-		cpuif.res = ramif.res;
+		_if.ram_load	= crif.ram_load;
+		_if.ram_store	= crif.ram_store;
+		_if.ram_state	= crif.ram_state;
+		_if.ram_addr	= crif.ram_addr;
+		_if.ram_ren		= crif.ram_ren;
+		_if.ram_wen		= crif.ram_wen;
 	end
 
 	// Modules
@@ -58,9 +55,9 @@ module system #(
 	
 	// Memory controller/arbiter
 	// TODO: extend to a memory bus controller?
-	memory_controller_minibus mc(dpif, cpuif);
+	memory_controller mc(dpif, crif);
 
 	// Onchip ram, for offchip, initialize an offchip mem controller?
-	ram_minibus ram0(ramif);
+	ram	#(.REORDER_DATA(1'b0), .LAT(4'd0)) ram0(crif);
 
 endmodule

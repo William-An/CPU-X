@@ -14,8 +14,7 @@
 
 import minibus_pkg::*;
 
-interface minibus_master_if;
-    logic clk, nrst;
+interface minibus_master_if (input logic clk, input logic nrst);
     minibus_req_pack req;
     minibus_res_pack res;
 
