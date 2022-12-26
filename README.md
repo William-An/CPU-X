@@ -33,6 +33,8 @@ Mini-Bus is a simple bus protocol used to connect the CPU core with other compon
 
 ### Waveform examples
 
+Using [Wavedrom](https://github.com/wavedrom/wavedrom) for visualization.
+
 #### Mini-Bus Write
 
 <div style="background-color: #EBEBEB">
