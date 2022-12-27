@@ -27,7 +27,7 @@ module memory_controller_minibus (
         _mif.req = '0;
         _mif.req.width = _dpif.dmem_width;
 
-
+        // TODO Handle response error
         // If slave device acknowledge, good to go 
         if (_mif.res.ack) begin
             // RAM last request is ready

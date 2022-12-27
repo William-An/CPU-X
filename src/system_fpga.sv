@@ -29,7 +29,7 @@ module system_fpga (
     // Placeholder for peripherals
     always_comb begin
         seg_data = syif.ram_addr[7:0];
-        seg_sel = 6'b100000;
+        seg_sel = 6'b111110;
     end
 
     system #(.PC_INIT(PC_INIT)) core(cpu_clk, nrst, syif);
