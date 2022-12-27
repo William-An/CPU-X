@@ -243,6 +243,18 @@ Using [Wavedrom](https://github.com/wavedrom/wavedrom) for visualization.
          2. [x] Update regfile for load operation only when dhit
 4. [x] Auto tester for unit test asm from riscv-tests
 
+### Stage I.a: Simple Peripheral
+
+1. [x] Mini-Bus protocol
+2. [ ] For non-word loads, put data in right-aligned format or maintain same offset in memory?
+   1. [ ] If load a byte `0xAA` at address `0x1`, do we want `0x000000AA` or `0x0000AA00`?
+   2. [ ] Probably the first one as the address bus already contain the offset information, no need to include redundant information on the data bus as well
+   3. [ ] Also no need on RISCV side to shift the offseted data
+   4. [ ] Add this to Mini-Bus protocol
+3. [ ] Simple IO
+   1. [ ] LED Segement
+   2. [ ] Off-chip RAM
+
 ### Stage II: Pipeline
 
 1. [ ] Implement pipeline CPU with machine-mode
