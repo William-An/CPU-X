@@ -34,9 +34,11 @@ module system #(
 		.nrst(nrst)
 	);
 
-	localparam SLAVE_DEVICE_COUNT = 1;
+	// Initialize memory mapping
+	localparam SLAVE_DEVICE_COUNT = 2;
 	localparam slave_mem_map ram_memmap = '{0, 'h4000};
-	localparam slave_mem_map [SLAVE_DEVICE_COUNT - 1:0] slave_dev_mmap = {ram_memmap};
+	localparam slave_mem_map segment_memmap = '{'h4000, 'h4004};
+	localparam slave_mem_map slave_dev_mmap [SLAVE_DEVICE_COUNT] = '{ram_memmap, segment_memmap};
 	minibus_slave_if slave_dev_ifs [SLAVE_DEVICE_COUNT](.clk(clk), .nrst(nrst));
 	
 	// Connecting ram signals to system
@@ -63,5 +65,6 @@ module system #(
 
 	// Onchip ram, for offchip, initialize an offchip mem controller?
 	ram_minibus ram0(slave_dev_ifs[0]);
+	ax301_segment_display seg_disp(slave_dev_ifs[1], _if.seg_ctrl);
 
 endmodule

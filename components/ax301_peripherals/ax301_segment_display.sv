@@ -19,7 +19,7 @@ module ax301_segment_display (
     output ax301_segment_ctrl seg_ctrl
 );
     logic [DATA_WIDTH - 1:0] reg_out;
-    minibus_slave_regs #(.REGS_COUNT(1)) (_sif, reg_out);
+    minibus_slave_regs #(.REGS_COUNT(1)) regs(_sif, reg_out);
 
     assign seg_ctrl.sel = reg_out[13:8];
     assign seg_ctrl.segment = reg_out[7:0];

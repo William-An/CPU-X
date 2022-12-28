@@ -45,9 +45,9 @@ module minibus_slave_regs #(
         n_rdata = '0;
         next_regs = regs;
         outputs = regs;
-        _sif.res = '0;
+        _slaveif.res = '0;
 
-        casez ({_sif.req.wen, _sif.req.ren, _sif.nrst})
+        casez ({_slaveif.req.wen, _slaveif.req.ren, _slaveif.nrst})
             3'b00?: begin
                 // If no EN signals, the regs are free
                 n_rdy = 1'b0;
@@ -55,34 +55,34 @@ module minibus_slave_regs #(
             3'b101: begin
                 // Prepare to perform register writes
                 n_rdy = 1'b1;
-                casez (_sif.req.width[1:0])
+                casez (_slaveif.req.width[1:0])
                     2'b00: begin
                         // Byte write
                         logic [DATA_WIDTH - 1:0] old_data;
                         logic [DATA_WIDTH - 1:0] new_data;
-                        old_data = regs[_sif.req.addr[ADDR_WIDTH-1:2]];
-                        casez (_sif.req.addr[1:0])
-                            2'b00: new_data = {old_data[31:8], _sif.req.wdata[7:0]};
-                            2'b01: new_data = {old_data[31:16], _sif.req.wdata[7:0], old_data[7:0]};
-                            2'b10: new_data = {old_data[31:24], _sif.req.wdata[7:0], old_data[15:0]};
-                            2'b11: new_data = {_sif.req.wdata[7:0], old_data[23:0]};
+                        old_data = regs[_slaveif.req.addr[ADDR_WIDTH-1:2]];
+                        casez (_slaveif.req.addr[1:0])
+                            2'b00: new_data = {old_data[31:8], _slaveif.req.wdata[7:0]};
+                            2'b01: new_data = {old_data[31:16], _slaveif.req.wdata[7:0], old_data[7:0]};
+                            2'b10: new_data = {old_data[31:24], _slaveif.req.wdata[7:0], old_data[15:0]};
+                            2'b11: new_data = {_slaveif.req.wdata[7:0], old_data[23:0]};
                         endcase
-                        next_regs[_sif.req.addr[ADDR_WIDTH-1:2]] = new_data;
+                        next_regs[_slaveif.req.addr[ADDR_WIDTH-1:2]] = new_data;
                     end
                     2'b01: begin
                         // Half word write
                         logic [DATA_WIDTH - 1:0] old_data;
                         logic [DATA_WIDTH - 1:0] new_data;
-                        old_data = regs[_sif.req.addr[ADDR_WIDTH-1:2]];
-                        casez (_sif.req.addr[1])
-                            2'b00: new_data = {old_data[31:16], _sif.req.wdata[15:0]};
-                            2'b01: new_data = {_sif.req.wdata[15:0], old_data[15:0]};
+                        old_data = regs[_slaveif.req.addr[ADDR_WIDTH-1:2]];
+                        casez (_slaveif.req.addr[1])
+                            2'b00: new_data = {old_data[31:16], _slaveif.req.wdata[15:0]};
+                            2'b01: new_data = {_slaveif.req.wdata[15:0], old_data[15:0]};
                         endcase
-                        next_regs[_sif.req.addr[ADDR_WIDTH-1:2]] = new_data;
+                        next_regs[_slaveif.req.addr[ADDR_WIDTH-1:2]] = new_data;
                     end
                     2'b10: begin
                         // Full word write
-                        next_regs[_sif.req.addr[ADDR_WIDTH-1:2]] = _sif.req.wdata;
+                        next_regs[_slaveif.req.addr[ADDR_WIDTH-1:2]] = _slaveif.req.wdata;
                     end
                     default: begin
                         n_err = 1'b1;
@@ -96,7 +96,7 @@ module minibus_slave_regs #(
                 
                 // Just return the whole word now as master device will resolve for now
                 // TODO Remove the offset information in Mini-Bus data signals
-                n_rdata = regs[_sif.req.addr[ADDR_WIDTH-1:2]];
+                n_rdata = regs[_slaveif.req.addr[ADDR_WIDTH-1:2]];
             end
             default: begin
                 n_rdy = 1'b0;
@@ -104,10 +104,10 @@ module minibus_slave_regs #(
         endcase
 
         // If ram ready and this device is selected, we acknowledge
-        if (rdy && _sif.sel) begin
-            _sif.res.ack = 1'b1;
-            _sif.res.err = err;
-            _sif.res.rdata = rdata;
+        if (rdy && _slaveif.sel) begin
+            _slaveif.res.ack = 1'b1;
+            _slaveif.res.err = err;
+            _slaveif.res.rdata = rdata;
         end
     end
 
