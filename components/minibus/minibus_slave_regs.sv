@@ -45,7 +45,6 @@ module minibus_slave_regs #(
         n_rdata = '0;
         next_regs = regs;
         outputs = regs;
-        _slaveif.res = '0;
 
         casez ({_slaveif.req.wen, _slaveif.req.ren, _slaveif.nrst})
             3'b00?: begin
@@ -103,12 +102,10 @@ module minibus_slave_regs #(
             end
         endcase
 
-        // If ram ready and this device is selected, we acknowledge
-        if (rdy && _slaveif.sel) begin
-            _slaveif.res.ack = 1'b1;
-            _slaveif.res.err = err;
-            _slaveif.res.rdata = rdata;
-        end
+        // If ram ready and this device is selected, we acknowledges
+        _slaveif.res.ack = rdy & _slaveif.sel;
+        _slaveif.res.err = err;
+        _slaveif.res.rdata = rdata;
     end
 
 endmodule

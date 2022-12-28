@@ -43,12 +43,13 @@ module minibus_decoder #(
     always_comb begin : MINIBUS_MASTER_HANDLE
         // Cannot assign to zeros?
         _masterif.res = _slaveifs[0].res;
-        for (int unsigned i = 0; i < SLAVE_COUNT; i++) begin
-            if ((_masterif.req.addr >= slavemmaps[i].addr_start) &&
-                (_masterif.req.addr <  slavemmaps[i].addr_end)) begin
+        for (int unsigned k = 0; k < SLAVE_COUNT; k++) begin
+            if ((_masterif.req.addr >= slavemmaps[k].addr_start) &&
+                (_masterif.req.addr <  slavemmaps[k].addr_end)) begin
 
-                // TODO: This cannot be here as we will have multiple drivers
-                _masterif.res = response_map[i];
+                // TODO Start with here? If set constant to 0
+                // the code will not stuck in comb loop
+                _masterif.res = response_map[k];
             end
         end
     end

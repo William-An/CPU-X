@@ -25,7 +25,7 @@ module memory_controller_minibus (
         _dpif.dhit = 1'b0;
         _dpif.dmem_load = '0;
         _mif.req = '0;
-        _mif.req.width = _dpif.dmem_width;
+        _mif.req.width = _dpif.dmem_width[1:0];
 
         // TODO Handle response error
         if (_dpif.dmem_wen == 1'b1) begin : DATA_STORE

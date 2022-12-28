@@ -9,6 +9,7 @@ OBJCOPY_FLAGS		:= --only-section=.text.startup --only-section=.text.init \
 
 BENCHMARKS_DIR	:= $(RISCV_TEST_DIR)/benchmarks
 UNIT_TEST_DIR	:= $(RISCV_TEST_DIR)/isa
+OWN_PROG_DIR	:= ./prog
 
 PROJECT		:= CPU-X
 REVISION 	:= top
@@ -49,6 +50,11 @@ isa_%: $(UNIT_TEST_DIR)/%
 	@$(RISCV_ELF_PREFIX)-objcopy $(OBJCOPY_FLAGS) $< tmp.hex > /dev/null
 	@srec_cat tmp.hex -intel -output $(HEX_INIT_FILE) -Intel -line-length=20
 	@rm tmp.hex
+
+# Own RISCV programs
+own_%:
+	$(MAKE) -C $(OWN_PROG_DIR) $*.riscv
+	@cp $(OWN_PROG_DIR)/$*.hex $(HEX_INIT_FILE)
 
 # Build project
 build:
