@@ -29,8 +29,7 @@ module ram_minibus (
     end
 
     always_comb begin: RAM_NEXT
-        n_ram_rdy = ram_rdy;
-        _sif.res.ack = 1'b0;
+        n_ram_rdy = 1'b0;
         _sif.res.err = 1'b0;
 
         casez ({_sif.req.wen, _sif.req.ren, _sif.nrst})
@@ -48,10 +47,8 @@ module ram_minibus (
             end
         endcase
 
-        // If ram ready and this device is selected, we acknowledge
-        if (ram_rdy && _sif.sel) begin
-            _sif.res.ack = 1'b1;
-        end
+        // If ram ready, we acknowledge
+        _sif.res.ack = ram_rdy & _sif.sel;
     end
 
     always_comb begin: BYTE_EN_MUX

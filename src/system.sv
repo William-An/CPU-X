@@ -13,6 +13,9 @@
 `include "datapath_if.svh"
 `include "system_if.svh"
 `include "cpu_ram_if.svh"
+`include "minibus/minibus_pkg.svh"
+`include "minibus/minibus_slave_if.svh"
+`include "minibus/minibus_master_if.svh"
 
 import rv32ima_pkg::*;
 
@@ -31,27 +34,25 @@ module system #(
 		.nrst(nrst)
 	);
 
-	minibus_slave_if ramif(
-		.clk(clk),
-		.nrst(nrst)
-	);
-
-
+	localparam SLAVE_DEVICE_COUNT = 1;
+	localparam slave_mem_map ram_memmap = '{0, 'h4000};
+	localparam slave_mem_map [SLAVE_DEVICE_COUNT - 1:0] slave_dev_mmap = {ram_memmap};
+	minibus_slave_if slave_dev_ifs [SLAVE_DEVICE_COUNT](.clk(clk), .nrst(nrst));
+	
 	// Connecting ram signals to system
 	always_comb begin
-		_if.ram_load	= ramif.res.rdata;
-		_if.ram_store	= ramif.req.wdata;
-		_if.ram_addr	= ramif.req.addr;
-		_if.ram_ren		= ramif.req.ren;
-		_if.ram_wen		= ramif.req.wen;
+		_if.ram_load	= slave_dev_ifs[0].res.rdata;
+		_if.ram_store	= slave_dev_ifs[0].req.wdata;
+		_if.ram_addr	= slave_dev_ifs[0].req.addr;
+		_if.ram_ren		= slave_dev_ifs[0].req.ren;
+		_if.ram_wen		= slave_dev_ifs[0].req.wen;
 	end
 
-	// Single connection, no decoder needed
-	always_comb begin
-		ramif.req = cpuif.req;
-		ramif.sel = 1'b1;
-		cpuif.res = ramif.res;
-	end
+	// Decoder/Minibus hub
+	minibus_decoder #(.SLAVE_COUNT(SLAVE_DEVICE_COUNT)) minibus_dec0(
+		._masterif(cpuif),
+		._slaveifs(slave_dev_ifs),
+		.slavemmaps(slave_dev_mmap));
 
 	// Modules
 	datapath #(.PC_INIT(PC_INIT)) dp0(dpif);
@@ -61,6 +62,6 @@ module system #(
 	memory_controller_minibus mc(dpif, cpuif);
 
 	// Onchip ram, for offchip, initialize an offchip mem controller?
-	ram_minibus ram0(ramif);
+	ram_minibus ram0(slave_dev_ifs[0]);
 
 endmodule

@@ -28,8 +28,26 @@ module memory_controller_minibus (
         _mif.req.width = _dpif.dmem_width;
 
         // TODO Handle response error
+        if (_dpif.dmem_wen == 1'b1) begin : DATA_STORE
+            // Serve ongoing store
+            _mif.req.addr = _dpif.dmem_addr;
+            _mif.req.wdata = _dpif.dmem_store;
+            _mif.req.wen = 1'b1;
+        end
+        else if (_dpif.dmem_ren == 1'b1) begin : DATA_LOAD
+            // Serve ongoing load
+            _mif.req.addr = _dpif.dmem_addr;
+            _mif.req.ren = 1'b1;
+        end
+        else if (_dpif.imem_ren == 1'b1) begin : INST_LOAD
+            // Serve ongoing fetch
+            _mif.req.addr = _dpif.imem_addr;
+            _mif.req.ren = 1'b1;
+        end
+
         // If slave device acknowledge, good to go 
-        if (_mif.res.ack) begin
+        // but still maintain the address signals
+        if (_mif.res.ack) begin : REQ_ACK
             // RAM last request is ready
             // Single port ram
             _mif.req.wen = 1'b0;
@@ -46,24 +64,6 @@ module memory_controller_minibus (
             else begin
                 _dpif.ihit = _dpif.imem_ren;
                 _dpif.imem_load = _mif.res.rdata;
-            end
-        end
-        else begin
-            if (_dpif.dmem_wen == 1'b1) begin
-                // Serve ongoing store
-                _mif.req.addr = _dpif.dmem_addr;
-                _mif.req.wdata = _dpif.dmem_store;
-                _mif.req.wen = 1'b1;
-            end
-            else if (_dpif.dmem_ren == 1'b1) begin
-                // Serve ongoing load
-                _mif.req.addr = _dpif.dmem_addr;
-                _mif.req.ren = 1'b1;
-            end
-            else if (_dpif.imem_ren == 1'b1) begin
-                // Serve ongoing fetch
-                _mif.req.addr = _dpif.imem_addr;
-                _mif.req.ren = 1'b1;
             end
         end
     end

@@ -27,12 +27,14 @@ module minibus_decoder #(
         genvar i;
         for (i = 0; i < SLAVE_COUNT; i++) begin : MINIBUS_GEN
             always_comb begin : MINIBUS_SLAVE_HANDLE
-                _slaveifs[i].sel = '0;
+                _slaveifs[i].sel = 1'b0;
                 _slaveifs[i].req = _masterif.req;
-                _masterif.res = '0;
 
-                if (_masterif.req.addr >= slavemmaps[i].addr_start &&
-                    _masterif.req.addr <  slavemmaps[i].addr_end) begin
+                // Cannot assign to zeros?
+                _masterif.res = _slaveifs[0].res;
+
+                if ((_masterif.req.addr >= slavemmaps[i].addr_start) &&
+                    (_masterif.req.addr <  slavemmaps[i].addr_end)) begin
                     _slaveifs[i].sel = 1'b1;
                     _masterif.res = _slaveifs[i].res;
                 end

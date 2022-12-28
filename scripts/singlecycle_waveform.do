@@ -1,32 +1,19 @@
 onerror {resume}
+quietly virtual signal -install /tb_system/dut/cpuif { (context /tb_system/dut/cpuif )&{clk , nrst , req , res }} Master
+quietly virtual function -install {/tb_system/dut/slave_dev_ifs[0]} -env /tb_system/dut/slave_dev_ifs[0] { &{/tb_system/dut/slave_dev_ifs[0]/clk, /tb_system/dut/slave_dev_ifs[0]/nrst, /tb_system/dut/slave_dev_ifs[0]/sel, /tb_system/dut/slave_dev_ifs[0]/req, /tb_system/dut/slave_dev_ifs[0]/res }} slaveif_0
 quietly WaveActivateNextPane {} 0
 add wave -noupdate /tb_system/tb_clk
 add wave -noupdate /tb_system/tb_nrst
 add wave -noupdate /tb_system/tb_data
-add wave -noupdate /tb_system/dut/cpu_clk
 add wave -noupdate -group TB_systemif /tb_system/tb_sysif0/ram_addr
 add wave -noupdate -group TB_systemif /tb_system/tb_sysif0/ram_store
 add wave -noupdate -group TB_systemif /tb_system/tb_sysif0/ram_load
 add wave -noupdate -group TB_systemif /tb_system/tb_sysif0/ram_ren
 add wave -noupdate -group TB_systemif /tb_system/tb_sysif0/ram_wen
 add wave -noupdate -group TB_systemif /tb_system/tb_sysif0/ram_state
-add wave -noupdate -group RAM /tb_system/dut/ram0/REORDER_DATA
-add wave -noupdate -group RAM /tb_system/dut/ram0/LAT
 add wave -noupdate -group RAM /tb_system/dut/ram0/byteen
-add wave -noupdate -group RAM /tb_system/dut/ram0/lat_count
-add wave -noupdate -group RAM /tb_system/dut/ram0/next_lat_count
-add wave -noupdate -group RAM /tb_system/dut/ram0/tmp_data
 add wave -noupdate -group RAM /tb_system/dut/ram0/ram_rdy
 add wave -noupdate -group RAM /tb_system/dut/ram0/n_ram_rdy
-add wave -noupdate -group RAMIF /tb_system/dut/crif/ram_clk
-add wave -noupdate -group RAMIF /tb_system/dut/crif/nrst
-add wave -noupdate -group RAMIF /tb_system/dut/crif/ram_addr
-add wave -noupdate -group RAMIF /tb_system/dut/crif/ram_store
-add wave -noupdate -group RAMIF /tb_system/dut/crif/ram_load
-add wave -noupdate -group RAMIF /tb_system/dut/crif/ram_ren
-add wave -noupdate -group RAMIF /tb_system/dut/crif/ram_wen
-add wave -noupdate -group RAMIF /tb_system/dut/crif/ram_width
-add wave -noupdate -group RAMIF /tb_system/dut/crif/ram_state
 add wave -noupdate -group RAMIF /tb_system/dut/ram0/ram_rdy
 add wave -noupdate -group RAMIF /tb_system/dut/ram0/n_ram_rdy
 add wave -noupdate -group DATAPAT -group DPIF /tb_system/dut/dpif/clk
@@ -124,8 +111,11 @@ add wave -noupdate -group CSR_EXCEP /tb_system/dut/dp0/csr_exception0/exception_
 add wave -noupdate -group CSR_EXCEP /tb_system/dut/dp0/csr_exception0/mtvec_base_addr
 add wave -noupdate -group CSR_EXCEP /tb_system/dut/dp0/csr_exception0/cause_code
 add wave -noupdate -group CSR_EXCEP /tb_system/dut/dp0/csr_exception0/trap_value
+add wave -noupdate -expand -group MINIBus -expand /tb_system/dut/minibus_dec0/slavemmaps
+add wave -noupdate -expand -group MINIBus -expand /tb_system/dut/cpuif/Master
+add wave -noupdate -expand -group MINIBus -expand {/tb_system/dut/slave_dev_ifs[0]/slaveif_0}
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {6743844 ps} 0}
+WaveRestoreCursors {{Cursor 1} {121773 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 293
 configure wave -valuecolwidth 100
@@ -141,4 +131,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {6655028 ps} {7147704 ps}
+WaveRestoreZoom {0 ps} {492676 ps}
