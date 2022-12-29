@@ -17,9 +17,10 @@ module minibus_slave_regs #(
     REGS_COUNT = 4
 ) (
     minibus_slave_if.slave _slaveif,
-    output logic [DATA_WIDTH - 1:0][REGS_COUNT - 1:0] outputs
+    output logic [REGS_COUNT - 1:0][DATA_WIDTH - 1:0] outputs
 );
-    logic [DATA_WIDTH - 1:0][REGS_COUNT - 1:0] regs, next_regs;
+    localparam REGS_ADDR_WIDTH = $clog2(REGS_COUNT) + 1;
+    logic [REGS_COUNT - 1:0][DATA_WIDTH - 1:0] regs, next_regs;
     logic rdy, n_rdy;
     logic err, n_err;
     logic [DATA_WIDTH - 1:0] rdata, n_rdata;
@@ -59,29 +60,32 @@ module minibus_slave_regs #(
                         // Byte write
                         logic [DATA_WIDTH - 1:0] old_data;
                         logic [DATA_WIDTH - 1:0] new_data;
-                        old_data = regs[_slaveif.req.addr[ADDR_WIDTH-1:2]];
+                        // Use REGS_ADDR_WIDTH + 1 as register are word aligned while
+                        // incomign address is byte aligned
+                        old_data = regs[_slaveif.req.addr[REGS_ADDR_WIDTH + 1:2]];
                         casez (_slaveif.req.addr[1:0])
                             2'b00: new_data = {old_data[31:8], _slaveif.req.wdata[7:0]};
                             2'b01: new_data = {old_data[31:16], _slaveif.req.wdata[7:0], old_data[7:0]};
                             2'b10: new_data = {old_data[31:24], _slaveif.req.wdata[7:0], old_data[15:0]};
                             2'b11: new_data = {_slaveif.req.wdata[7:0], old_data[23:0]};
                         endcase
-                        next_regs[_slaveif.req.addr[ADDR_WIDTH-1:2]] = new_data;
+                        next_regs[_slaveif.req.addr[REGS_ADDR_WIDTH + 1:2]] = new_data;
                     end
                     2'b01: begin
                         // Half word write
                         logic [DATA_WIDTH - 1:0] old_data;
                         logic [DATA_WIDTH - 1:0] new_data;
-                        old_data = regs[_slaveif.req.addr[ADDR_WIDTH-1:2]];
+                        old_data = regs[_slaveif.req.addr[REGS_ADDR_WIDTH + 1:2]];
                         casez (_slaveif.req.addr[1])
                             2'b00: new_data = {old_data[31:16], _slaveif.req.wdata[15:0]};
                             2'b01: new_data = {_slaveif.req.wdata[15:0], old_data[15:0]};
                         endcase
-                        next_regs[_slaveif.req.addr[ADDR_WIDTH-1:2]] = new_data;
+                        next_regs[_slaveif.req.addr[REGS_ADDR_WIDTH + 1:2]] = new_data;
                     end
                     2'b10: begin
                         // Full word write
-                        next_regs[_slaveif.req.addr[ADDR_WIDTH-1:2]] = _slaveif.req.wdata;
+                        // TODO This is not working here
+                        next_regs[_slaveif.req.addr[REGS_ADDR_WIDTH + 1:2]] = _slaveif.req.wdata;
                     end
                     default: begin
                         n_err = 1'b1;
@@ -95,7 +99,7 @@ module minibus_slave_regs #(
                 
                 // Just return the whole word now as master device will resolve for now
                 // TODO Remove the offset information in Mini-Bus data signals
-                n_rdata = regs[_slaveif.req.addr[ADDR_WIDTH-1:2]];
+                n_rdata = regs[_slaveif.req.addr[REGS_ADDR_WIDTH + 1:2]];
             end
             default: begin
                 n_rdy = 1'b0;

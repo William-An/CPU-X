@@ -64,7 +64,9 @@ module ram_minibus (
         .address(_sif.req.addr[BIT_WIDTH - 1:2]),
         .clock(_sif.clk),
         .data(_sif.req.wdata),
-        .wren(_sif.req.wen),
+        // Don't write until the device is selected
+        // Read should be safe
+        .wren(_sif.req.wen & _sif.sel),
         .byteena(byteen),
         .q(_sif.res.rdata)
     );
