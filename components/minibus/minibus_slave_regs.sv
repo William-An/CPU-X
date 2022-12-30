@@ -54,7 +54,7 @@ module minibus_slave_regs #(
             end
             4'b1101: begin
                 // Prepare to perform register writes
-                n_rdy = 1'b1;
+                n_rdy = ~rdy;
                 casez (_slaveif.req.width[1:0])
                     2'b00: begin
                         // Byte write
@@ -95,7 +95,7 @@ module minibus_slave_regs #(
             4'b1011: begin
                 // Prepare to perform register reads
                 // Cache the register data to output at DATA phase
-                n_rdy = 1'b1;
+                n_rdy = ~rdy;
                 casez (_slaveif.req.width[1:0])
                     2'b00: begin
                         // Byte read

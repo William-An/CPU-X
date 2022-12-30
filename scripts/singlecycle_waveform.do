@@ -18,30 +18,30 @@ add wave -noupdate -group RAM /tb_system/dut/ram0/ram_rdy
 add wave -noupdate -group RAM /tb_system/dut/ram0/n_ram_rdy
 add wave -noupdate -group RAMIF /tb_system/dut/ram0/ram_rdy
 add wave -noupdate -group RAMIF /tb_system/dut/ram0/n_ram_rdy
-add wave -noupdate -group DATAPAT -expand -group DPIF /tb_system/dut/dpif/clk
-add wave -noupdate -group DATAPAT -expand -group DPIF /tb_system/dut/dpif/nrst
-add wave -noupdate -group DATAPAT -expand -group DPIF /tb_system/dut/dpif/imem_load
-add wave -noupdate -group DATAPAT -expand -group DPIF /tb_system/dut/dpif/imem_addr
-add wave -noupdate -group DATAPAT -expand -group DPIF /tb_system/dut/dpif/ihit
-add wave -noupdate -group DATAPAT -expand -group DPIF /tb_system/dut/dpif/imem_ren
-add wave -noupdate -group DATAPAT -expand -group DPIF /tb_system/dut/dpif/dhit
-add wave -noupdate -group DATAPAT -expand -group DPIF /tb_system/dut/dpif/dmem_wen
-add wave -noupdate -group DATAPAT -expand -group DPIF /tb_system/dut/dpif/dmem_ren
-add wave -noupdate -group DATAPAT -expand -group DPIF /tb_system/dut/dpif/dmem_store
-add wave -noupdate -group DATAPAT -expand -group DPIF /tb_system/dut/dpif/dmem_load
-add wave -noupdate -group DATAPAT -expand -group DPIF /tb_system/dut/dpif/dmem_addr
-add wave -noupdate -group DATAPAT -expand -group DPIF /tb_system/dut/dpif/dmem_width
-add wave -noupdate -group DATAPAT -expand -group DPIF /tb_system/dut/dp0/served_data
-add wave -noupdate -group DATAPAT -expand -group DPIF /tb_system/dut/dp0/next_served_data
-add wave -noupdate -group DATAPAT -expand -group pcif /tb_system/dut/dp0/pcif0/clk
-add wave -noupdate -group DATAPAT -expand -group pcif /tb_system/dut/dp0/pcif0/nrst
-add wave -noupdate -group DATAPAT -expand -group pcif /tb_system/dut/dp0/pcif0/curr_pc
-add wave -noupdate -group DATAPAT -expand -group pcif /tb_system/dut/dp0/pcif0/pc_add4
-add wave -noupdate -group DATAPAT -expand -group pcif /tb_system/dut/dp0/pcif0/next_pc
-add wave -noupdate -group DATAPAT -expand -group pcif /tb_system/dut/dp0/pcif0/next_pc_en
-add wave -noupdate -group DATAPAT -expand -group pcif /tb_system/dut/dp0/pcif0/branch_addr
-add wave -noupdate -group DATAPAT -expand -group pcif /tb_system/dut/dp0/pcif0/branch_addr_en
-add wave -noupdate -group DATAPAT -expand -group pcif /tb_system/dut/dp0/pcif0/inst_ready
+add wave -noupdate -group DATAPAT -group DPIF /tb_system/dut/dpif/clk
+add wave -noupdate -group DATAPAT -group DPIF /tb_system/dut/dpif/nrst
+add wave -noupdate -group DATAPAT -group DPIF /tb_system/dut/dpif/imem_load
+add wave -noupdate -group DATAPAT -group DPIF /tb_system/dut/dpif/imem_addr
+add wave -noupdate -group DATAPAT -group DPIF /tb_system/dut/dpif/ihit
+add wave -noupdate -group DATAPAT -group DPIF /tb_system/dut/dpif/imem_ren
+add wave -noupdate -group DATAPAT -group DPIF /tb_system/dut/dpif/dhit
+add wave -noupdate -group DATAPAT -group DPIF /tb_system/dut/dpif/dmem_wen
+add wave -noupdate -group DATAPAT -group DPIF /tb_system/dut/dpif/dmem_ren
+add wave -noupdate -group DATAPAT -group DPIF /tb_system/dut/dpif/dmem_store
+add wave -noupdate -group DATAPAT -group DPIF /tb_system/dut/dpif/dmem_load
+add wave -noupdate -group DATAPAT -group DPIF /tb_system/dut/dpif/dmem_addr
+add wave -noupdate -group DATAPAT -group DPIF /tb_system/dut/dpif/dmem_width
+add wave -noupdate -group DATAPAT -group DPIF /tb_system/dut/dp0/served_data
+add wave -noupdate -group DATAPAT -group DPIF /tb_system/dut/dp0/next_served_data
+add wave -noupdate -group DATAPAT -group pcif /tb_system/dut/dp0/pcif0/clk
+add wave -noupdate -group DATAPAT -group pcif /tb_system/dut/dp0/pcif0/nrst
+add wave -noupdate -group DATAPAT -group pcif /tb_system/dut/dp0/pcif0/curr_pc
+add wave -noupdate -group DATAPAT -group pcif /tb_system/dut/dp0/pcif0/pc_add4
+add wave -noupdate -group DATAPAT -group pcif /tb_system/dut/dp0/pcif0/next_pc
+add wave -noupdate -group DATAPAT -group pcif /tb_system/dut/dp0/pcif0/next_pc_en
+add wave -noupdate -group DATAPAT -group pcif /tb_system/dut/dp0/pcif0/branch_addr
+add wave -noupdate -group DATAPAT -group pcif /tb_system/dut/dp0/pcif0/branch_addr_en
+add wave -noupdate -group DATAPAT -group pcif /tb_system/dut/dp0/pcif0/inst_ready
 add wave -noupdate -group DATAPAT -group decif /tb_system/dut/dp0/decif0/alu_cmd
 add wave -noupdate -group DATAPAT -group decif /tb_system/dut/dp0/decif0/rf_cmd
 add wave -noupdate -group DATAPAT -group decif /tb_system/dut/dp0/decif0/csr_cmd
@@ -73,15 +73,15 @@ add wave -noupdate -group DATAPAT -group brif /tb_system/dut/dp0/brif0/zero
 add wave -noupdate -group DATAPAT -group brif /tb_system/dut/dp0/brif0/neg
 add wave -noupdate -group DATAPAT -group brif /tb_system/dut/dp0/brif0/next_addr
 add wave -noupdate -group DATAPAT -group brif /tb_system/dut/dp0/brif0/next_addr_en
-add wave -noupdate -group DATAPAT -expand -group rfif /tb_system/dut/dp0/rfif0/clk
-add wave -noupdate -group DATAPAT -expand -group rfif /tb_system/dut/dp0/rfif0/nrst
-add wave -noupdate -group DATAPAT -expand -group rfif /tb_system/dut/dp0/rfif0/rsel1
-add wave -noupdate -group DATAPAT -expand -group rfif /tb_system/dut/dp0/rfif0/rsel2
-add wave -noupdate -group DATAPAT -expand -group rfif /tb_system/dut/dp0/rfif0/wsel
-add wave -noupdate -group DATAPAT -expand -group rfif /tb_system/dut/dp0/rfif0/wen
-add wave -noupdate -group DATAPAT -expand -group rfif /tb_system/dut/dp0/rfif0/rdat1
-add wave -noupdate -group DATAPAT -expand -group rfif /tb_system/dut/dp0/rfif0/rdat2
-add wave -noupdate -group DATAPAT -expand -group rfif /tb_system/dut/dp0/rfif0/wdat
+add wave -noupdate -group DATAPAT -group rfif /tb_system/dut/dp0/rfif0/clk
+add wave -noupdate -group DATAPAT -group rfif /tb_system/dut/dp0/rfif0/nrst
+add wave -noupdate -group DATAPAT -group rfif /tb_system/dut/dp0/rfif0/rsel1
+add wave -noupdate -group DATAPAT -group rfif /tb_system/dut/dp0/rfif0/rsel2
+add wave -noupdate -group DATAPAT -group rfif /tb_system/dut/dp0/rfif0/wsel
+add wave -noupdate -group DATAPAT -group rfif /tb_system/dut/dp0/rfif0/wen
+add wave -noupdate -group DATAPAT -group rfif /tb_system/dut/dp0/rfif0/rdat1
+add wave -noupdate -group DATAPAT -group rfif /tb_system/dut/dp0/rfif0/rdat2
+add wave -noupdate -group DATAPAT -group rfif /tb_system/dut/dp0/rfif0/wdat
 add wave -noupdate -group DATAPAT -group aluif /tb_system/dut/dp0/aif0/alu_op
 add wave -noupdate -group DATAPAT -group aluif /tb_system/dut/dp0/aif0/in1
 add wave -noupdate -group DATAPAT -group aluif /tb_system/dut/dp0/aif0/in2
@@ -91,7 +91,6 @@ add wave -noupdate -group DATAPAT -group aluif /tb_system/dut/dp0/aif0/neg
 add wave -noupdate -group DATAPAT -group aluif /tb_system/dut/dp0/aif0/overflow
 add wave -noupdate -group DATAPAT -group aluif /tb_system/dut/dp0/aif0/carry
 add wave -noupdate -group DATAPAT /tb_system/dut/dp0/ext_load
-add wave -noupdate -group DATAPAT /tb_system/dut/dp0/byteen
 add wave -noupdate -group DATAPAT /tb_system/dut/dp0/inst
 add wave -noupdate -group DATAPAT /tb_system/dut/dp0/next_inst
 add wave -noupdate -group DECODER /tb_system/dut/dp0/dec0/r_inst
@@ -113,21 +112,26 @@ add wave -noupdate -group CSR_EXCEP /tb_system/dut/dp0/csr_exception0/exception_
 add wave -noupdate -group CSR_EXCEP /tb_system/dut/dp0/csr_exception0/mtvec_base_addr
 add wave -noupdate -group CSR_EXCEP /tb_system/dut/dp0/csr_exception0/cause_code
 add wave -noupdate -group CSR_EXCEP /tb_system/dut/dp0/csr_exception0/trap_value
-add wave -noupdate -group MINIBus /tb_system/dut/minibus_dec0/slavemmaps
-add wave -noupdate -group MINIBus /tb_system/dut/cpuif/Master
+add wave -noupdate -group MINIBus -expand -subitemconfig {/tb_system/dut/cpuif/req -expand /tb_system/dut/cpuif/res -expand} /tb_system/dut/cpuif/Master
 add wave -noupdate -group MINIBus {/tb_system/dut/slave_dev_ifs[0]/slaveif_0}
 add wave -noupdate -group MINIBus {/tb_system/dut/slave_dev_ifs[1]/slaveif_1}
-add wave -noupdate -expand -group segment_regs /tb_system/dut/seg_disp/regs/outputs
-add wave -noupdate -expand -group segment_regs /tb_system/dut/seg_disp/regs/regs
-add wave -noupdate -expand -group segment_regs /tb_system/dut/seg_disp/regs/next_regs
-add wave -noupdate -expand -group segment_regs /tb_system/dut/seg_disp/regs/rdy
-add wave -noupdate -expand -group segment_regs /tb_system/dut/seg_disp/regs/n_rdy
-add wave -noupdate -expand -group segment_regs /tb_system/dut/seg_disp/regs/err
-add wave -noupdate -expand -group segment_regs /tb_system/dut/seg_disp/regs/n_err
-add wave -noupdate -expand -group segment_regs /tb_system/dut/seg_disp/regs/rdata
-add wave -noupdate -expand -group segment_regs /tb_system/dut/seg_disp/regs/n_rdata
+add wave -noupdate -group segment_regs /tb_system/dut/seg_disp/regs/outputs
+add wave -noupdate -group segment_regs /tb_system/dut/seg_disp/regs/regs
+add wave -noupdate -group segment_regs /tb_system/dut/seg_disp/regs/next_regs
+add wave -noupdate -group segment_regs /tb_system/dut/seg_disp/regs/rdy
+add wave -noupdate -group segment_regs /tb_system/dut/seg_disp/regs/n_rdy
+add wave -noupdate -group segment_regs /tb_system/dut/seg_disp/regs/err
+add wave -noupdate -group segment_regs /tb_system/dut/seg_disp/regs/n_err
+add wave -noupdate -group segment_regs /tb_system/dut/seg_disp/regs/rdata
+add wave -noupdate -group segment_regs /tb_system/dut/seg_disp/regs/n_rdata
+add wave -noupdate -expand -group memcontroller /tb_system/dut/mc/state
+add wave -noupdate -expand -group memcontroller /tb_system/dut/mc/n_state
+add wave -noupdate -expand -group memcontroller /tb_system/dut/mc/cached_req
+add wave -noupdate -expand -group memcontroller /tb_system/dut/mc/n_cached_req
+add wave -noupdate -expand -group memcontroller /tb_system/dut/mc/cached_res
+add wave -noupdate -expand -group memcontroller /tb_system/dut/mc/n_cached_res
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {114585 ps} 0}
+WaveRestoreCursors {{Cursor 1} {316743 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 293
 configure wave -valuecolwidth 100
@@ -143,4 +147,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {0 ps} {393246 ps}
+WaveRestoreZoom {0 ps} {1311584 ps}

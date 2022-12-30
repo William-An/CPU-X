@@ -44,7 +44,7 @@ module ram_minibus (
             4'b1101,
             4'b1011: begin
                 // Ram will ready in next cycle
-                n_ram_rdy = 1'b1;
+                n_ram_rdy = ~ram_rdy; // 1'b1;
             end
             default: begin
                 n_ram_rdy = 1'b0;
