@@ -141,6 +141,7 @@ Using [Wavedrom](https://github.com/wavedrom/wavedrom) for visualization.
    1. [ ] The default one will prompt `Folder exists` error if rerun simulation, requiring manually deletion of the `modelsim` folder everytime
 2. [ ] Create different revisions for testbench mapped simulation and FPGA download
    1. [ ] The FPGA one is with `system_fpga.sv` and the testbench should have `system.sv` as top module
+3. [ ] CI/CD integration with coverage report?
 
 ### Stage II: Pipeline
 

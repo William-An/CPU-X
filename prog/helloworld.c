@@ -22,8 +22,8 @@ const uint8_t seven_seg_digits_decode_gfedcba[75]= {
     0x64, 0x6E, 0x5B
 };
 
-const uint8_t * AX301_SEGMENT_OUT = 0x4000;
-const uint8_t * AX301_SEGMENT_SEL = 0x4001;
+#define AX301_SEGMENT_OUT 0x4000
+#define AX301_SEGMENT_SEL 0x4001
 
 void main(void) {
     uint8_t seg_map[] = {  
@@ -55,27 +55,30 @@ void main(void) {
     volatile uint8_t *seg_out_reg = AX301_SEGMENT_OUT;
     volatile uint8_t *seg_sel_reg = AX301_SEGMENT_SEL;
 
+    *seg_sel_reg = 0b111110;
+    *seg_out_reg = 0b11001100;
+
     for(;;) {
         // Scroll through the entire segment table
-        int scroll_counter = 0;
-        int display_counter = 0;
-        int arr_length = sizeof(seg_map) / sizeof(seg_map[0]);
-        for (int offset = 0; offset < arr_length; offset++) {
-            // Display 6 digitletter at a time
-            while (scroll_counter < 1000) {
-                for (int i = 0; i < 6; i++) {
-                    uint8_t sel = 0xFF & (~(1 << i));
-                    uint8_t data = seg_map[(i + offset) % arr_length];
-                    *seg_sel_reg = sel;
-                    *seg_out_reg = data;
+        // int scroll_counter = 0;
+        // int display_counter = 0;
+        // int arr_length = sizeof(seg_map) / sizeof(seg_map[0]);
+        // for (int offset = 0; offset < arr_length; offset++) {
+        //     // Display 6 digitletter at a time
+        //     while (scroll_counter < 1000) {
+        //         for (int i = 0; i < 6; i++) {
+        //             uint8_t sel = 0xFF & (~(1 << i));
+        //             uint8_t data = seg_map[(i + offset) % arr_length];
+        //             *seg_sel_reg = sel;
+        //             *seg_out_reg = data;
 
-                    while (display_counter < 25)
-                        display_counter++;
-                    display_counter = 0;
-                }
-                scroll_counter++;
-            }
-            scroll_counter = 0;
-        }
+        //             while (display_counter < 25)
+        //                 display_counter++;
+        //             display_counter = 0;
+        //         }
+        //         scroll_counter++;
+        //     }
+        //     scroll_counter = 0;
+        // }
     }
 }
