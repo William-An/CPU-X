@@ -226,7 +226,7 @@ Using [Wavedrom](https://github.com/wavedrom/wavedrom) for visualization.
    1. [x] RTL Level
    2. [x] GATE Level
       1. [x] Let TB listen on the RAM signals, waiting for writes to toHOST memory region with the value
-   3. [ ] Multi-cycle latency RAM
+   3. [x] Multi-cycle latency RAM
       1. [x] 0 cycle latency
       2. [x] 2 cycles latency
       3. [x] 3 cycles latency
@@ -244,14 +244,21 @@ Using [Wavedrom](https://github.com/wavedrom/wavedrom) for visualization.
 ### Stage I.a: Simple Peripheral
 
 1. [x] Mini-Bus protocol
-2. [ ] For non-word loads, put data in right-aligned format or maintain same offset in memory?
-   1. [ ] If load a byte `0xAA` at address `0x1`, do we want `0x000000AA` or `0x0000AA00`?
-   2. [ ] Probably the first one as the address bus already contain the offset information, no need to include redundant information on the data bus as well
-   3. [ ] Also no need on RISCV side to shift the offseted data
-   4. [ ] Add this to Mini-Bus protocol
+2. [x] For non-word loads, put data in right-aligned format or maintain same offset in memory?
+   1. If load a byte `0xAA` at address `0x1`, do we want `0x000000AA` or `0x0000AA00`?
+   2. Probably the first one as the address bus already contain the offset information, no need to include redundant information on the data bus as well
+   3. [x] Also no need on RISCV side to shift the offseted data
+   4. [x] Add this to Mini-Bus protocol
 3. [ ] Simple IO
-   1. [ ] LED Segement
+   1. [x] LED Segement
    2. [ ] Off-chip RAM
+
+### Stage I.b: Dev tool improvement
+
+1. [ ] Create a custom testbench compilation script to properly load folders in `components` with simulator
+   1. [ ] The default one will prompt `Folder exists` error if rerun simulation, requiring manually deletion of the `modelsim` folder everytime
+2. [ ] Create different revisions for testbench mapped simulation and FPGA download
+   1. [ ] The FPGA one is with `system_fpga.sv` and the testbench should have `system.sv` as top module
 
 ### Stage II: Pipeline
 
