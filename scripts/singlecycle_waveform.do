@@ -6,13 +6,13 @@ quietly WaveActivateNextPane {} 0
 add wave -noupdate /tb_system/tb_clk
 add wave -noupdate /tb_system/tb_nrst
 add wave -noupdate /tb_system/tb_data
-add wave -noupdate -expand -group TB_systemif /tb_system/tb_sysif0/ram_addr
-add wave -noupdate -expand -group TB_systemif /tb_system/tb_sysif0/ram_store
-add wave -noupdate -expand -group TB_systemif /tb_system/tb_sysif0/ram_load
-add wave -noupdate -expand -group TB_systemif /tb_system/tb_sysif0/ram_ren
-add wave -noupdate -expand -group TB_systemif /tb_system/tb_sysif0/ram_wen
-add wave -noupdate -expand -group TB_systemif /tb_system/tb_sysif0/ram_state
-add wave -noupdate -expand -group TB_systemif /tb_system/tb_sysif0/seg_ctrl
+add wave -noupdate -group TB_systemif /tb_system/tb_sysif0/ram_addr
+add wave -noupdate -group TB_systemif /tb_system/tb_sysif0/ram_store
+add wave -noupdate -group TB_systemif /tb_system/tb_sysif0/ram_load
+add wave -noupdate -group TB_systemif /tb_system/tb_sysif0/ram_ren
+add wave -noupdate -group TB_systemif /tb_system/tb_sysif0/ram_wen
+add wave -noupdate -group TB_systemif /tb_system/tb_sysif0/ram_state
+add wave -noupdate -group TB_systemif /tb_system/tb_sysif0/seg_ctrl
 add wave -noupdate -group RAM /tb_system/dut/ram0/byteen
 add wave -noupdate -group RAM /tb_system/dut/ram0/ram_rdy
 add wave -noupdate -group RAM /tb_system/dut/ram0/n_ram_rdy
@@ -113,12 +113,21 @@ add wave -noupdate -group CSR_EXCEP /tb_system/dut/dp0/csr_exception0/exception_
 add wave -noupdate -group CSR_EXCEP /tb_system/dut/dp0/csr_exception0/mtvec_base_addr
 add wave -noupdate -group CSR_EXCEP /tb_system/dut/dp0/csr_exception0/cause_code
 add wave -noupdate -group CSR_EXCEP /tb_system/dut/dp0/csr_exception0/trap_value
-add wave -noupdate -expand -group MINIBus /tb_system/dut/minibus_dec0/slavemmaps
-add wave -noupdate -expand -group MINIBus /tb_system/dut/cpuif/Master
-add wave -noupdate -expand -group MINIBus {/tb_system/dut/slave_dev_ifs[0]/slaveif_0}
-add wave -noupdate -expand -group MINIBus {/tb_system/dut/slave_dev_ifs[1]/slaveif_1}
+add wave -noupdate -group MINIBus /tb_system/dut/minibus_dec0/slavemmaps
+add wave -noupdate -group MINIBus /tb_system/dut/cpuif/Master
+add wave -noupdate -group MINIBus {/tb_system/dut/slave_dev_ifs[0]/slaveif_0}
+add wave -noupdate -group MINIBus {/tb_system/dut/slave_dev_ifs[1]/slaveif_1}
+add wave -noupdate -expand -group segment_regs /tb_system/dut/seg_disp/regs/outputs
+add wave -noupdate -expand -group segment_regs /tb_system/dut/seg_disp/regs/regs
+add wave -noupdate -expand -group segment_regs /tb_system/dut/seg_disp/regs/next_regs
+add wave -noupdate -expand -group segment_regs /tb_system/dut/seg_disp/regs/rdy
+add wave -noupdate -expand -group segment_regs /tb_system/dut/seg_disp/regs/n_rdy
+add wave -noupdate -expand -group segment_regs /tb_system/dut/seg_disp/regs/err
+add wave -noupdate -expand -group segment_regs /tb_system/dut/seg_disp/regs/n_err
+add wave -noupdate -expand -group segment_regs /tb_system/dut/seg_disp/regs/rdata
+add wave -noupdate -expand -group segment_regs /tb_system/dut/seg_disp/regs/n_rdata
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {71768 ps} 0}
+WaveRestoreCursors {{Cursor 1} {114585 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 293
 configure wave -valuecolwidth 100
@@ -134,4 +143,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {0 ps} {388342 ps}
+WaveRestoreZoom {0 ps} {393246 ps}

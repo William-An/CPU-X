@@ -47,12 +47,12 @@ module minibus_slave_regs #(
         next_regs = regs;
         outputs = regs;
 
-        casez ({_slaveif.req.wen, _slaveif.req.ren, _slaveif.nrst})
-            3'b00?: begin
-                // If no EN signals, the regs are free
+        casez ({_slaveif.sel, _slaveif.req.wen, _slaveif.req.ren, _slaveif.nrst})
+            4'b0???: begin
+                // If not selected, do nothing
                 n_rdy = 1'b0;
             end
-            3'b101: begin
+            4'b1101: begin
                 // Prepare to perform register writes
                 n_rdy = 1'b1;
                 casez (_slaveif.req.width[1:0])
@@ -63,6 +63,7 @@ module minibus_slave_regs #(
                         // Use REGS_ADDR_WIDTH + 1 as register are word aligned while
                         // incomign address is byte aligned
                         old_data = regs[_slaveif.req.addr[REGS_ADDR_WIDTH + 1:2]];
+                        // Figure out the byte offset
                         casez (_slaveif.req.addr[1:0])
                             2'b00: new_data = {old_data[31:8], _slaveif.req.wdata[7:0]};
                             2'b01: new_data = {old_data[31:16], _slaveif.req.wdata[7:0], old_data[7:0]};
@@ -84,7 +85,6 @@ module minibus_slave_regs #(
                     end
                     2'b10: begin
                         // Full word write
-                        // TODO This is not working here
                         next_regs[_slaveif.req.addr[REGS_ADDR_WIDTH + 1:2]] = _slaveif.req.wdata;
                     end
                     default: begin
@@ -92,14 +92,35 @@ module minibus_slave_regs #(
                     end
                 endcase
             end
-            3'b011: begin
+            4'b1011: begin
                 // Prepare to perform register reads
                 // Cache the register data to output at DATA phase
                 n_rdy = 1'b1;
-                
-                // Just return the whole word now as master device will resolve for now
-                // TODO Remove the offset information in Mini-Bus data signals
-                n_rdata = regs[_slaveif.req.addr[REGS_ADDR_WIDTH + 1:2]];
+                casez (_slaveif.req.width[1:0])
+                    2'b00: begin
+                        // Byte read
+                        casez (_slaveif.req.addr[1:0])
+                            2'b00: n_rdata[7:0] = regs[_slaveif.req.addr[REGS_ADDR_WIDTH + 1:2]][7:0];
+                            2'b01: n_rdata[7:0] = regs[_slaveif.req.addr[REGS_ADDR_WIDTH + 1:2]][15:8];
+                            2'b10: n_rdata[7:0] = regs[_slaveif.req.addr[REGS_ADDR_WIDTH + 1:2]][23:16];
+                            2'b11: n_rdata[7:0] = regs[_slaveif.req.addr[REGS_ADDR_WIDTH + 1:2]][31:24];
+                        endcase
+                    end
+                    2'b01: begin
+                        // Half word read
+                        casez (_slaveif.req.addr[1])
+                            2'b00: n_rdata[15:0] = regs[_slaveif.req.addr[REGS_ADDR_WIDTH + 1:2]][15:0];
+                            2'b01: n_rdata[15:0] = regs[_slaveif.req.addr[REGS_ADDR_WIDTH + 1:2]][31:16];
+                        endcase
+                    end
+                    2'b10: begin
+                        // Full word read
+                        n_rdata = regs[_slaveif.req.addr[REGS_ADDR_WIDTH + 1:2]];
+                    end
+                    default: begin
+                        n_err = 1'b1;
+                    end
+                endcase
             end
             default: begin
                 n_rdy = 1'b0;

@@ -27,10 +27,9 @@ module tb_minibus;
 	minibus_slave_if slave_dev_ifs [SLAVE_DEVICE_COUNT](.clk(tb_clk), .nrst(tb_nrst));
 
     // Decoder/Minibus hub
-	minibus_decoder #(.SLAVE_COUNT(SLAVE_DEVICE_COUNT)) minibus_dec0(
+	minibus_decoder #(.SLAVE_COUNT(SLAVE_DEVICE_COUNT), .SLAVEMMAPS(slave_dev_mmap)) minibus_dec0(
 		._masterif(tb_msif),
-		._slaveifs(slave_dev_ifs),
-		.slavemmaps(slave_dev_mmap));
+		._slaveifs(slave_dev_ifs));
 
     ram_minibus ram0(slave_dev_ifs[0]);
 	ax301_segment_display seg_disp(slave_dev_ifs[1], tb_seg_ctrl);

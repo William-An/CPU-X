@@ -51,10 +51,9 @@ module system #(
 	end
 
 	// Decoder/Minibus hub
-	minibus_decoder #(.SLAVE_COUNT(SLAVE_DEVICE_COUNT)) minibus_dec0(
+	minibus_decoder #(.SLAVE_COUNT(SLAVE_DEVICE_COUNT), .SLAVEMMAPS(slave_dev_mmap)) minibus_dec0(
 		._masterif(cpuif),
-		._slaveifs(slave_dev_ifs),
-		.slavemmaps(slave_dev_mmap));
+		._slaveifs(slave_dev_ifs));
 
 	// Modules
 	datapath #(.PC_INIT(PC_INIT)) dp0(dpif);

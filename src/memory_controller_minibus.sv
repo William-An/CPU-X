@@ -18,6 +18,7 @@ module memory_controller_minibus (
     import rv32ima_pkg::*;
     
     // TODO Arbiter irequest and datarequest
+    // TODO Make a state machine
     always_comb begin: ARIBITER
         // Just some initial setup to avoid latches
         _dpif.imem_load = '0;
@@ -30,6 +31,7 @@ module memory_controller_minibus (
         // TODO Handle response error
         if (_dpif.dmem_wen == 1'b1) begin : DATA_STORE
             // Serve ongoing store
+            // TODO Issue here, comment each one of these will work
             _mif.req.addr = _dpif.dmem_addr;
             _mif.req.wdata = _dpif.dmem_store;
             _mif.req.wen = 1'b1;
@@ -41,8 +43,9 @@ module memory_controller_minibus (
         end
         else if (_dpif.imem_ren == 1'b1) begin : INST_LOAD
             // Serve ongoing fetch
-            _mif.req.addr = _dpif.imem_addr;
-            _mif.req.ren = 1'b1;
+            _mif.req.addr   = _dpif.imem_addr;
+            _mif.req.width  = 2'b10;    // For instruction fetch, always at word alignment
+            _mif.req.ren    = 1'b1;
         end
 
         // If slave device acknowledge, good to go 

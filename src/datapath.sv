@@ -37,7 +37,6 @@ module datapath #(
 	alu_if aif0();
 	branch_resolver_if brif0();
     word_t ext_load;    // Signed extended load val
-	logic [3:0] byteen; // Byte enable signals for load/store
 
 	i_type inst, next_inst;
 	i_type cached_inst, next_cached_inst;
@@ -74,7 +73,6 @@ module datapath #(
 		next_inst			= inst;
 		// next_served_data 	= served_data;
 		ext_load			= '0;
-		byteen				= '1;
 
 		if (dpif.ihit == 1'b1)
 			next_inst = dpif.imem_load;
@@ -124,7 +122,7 @@ module datapath #(
 		aif0.alu_op = decif0.alu_cmd.aluop;
 
 		// Data memory signals
-		// dpif.dmem_store 	= rfif0.rdat2;
+		dpif.dmem_store 	= rfif0.rdat2;
 		dpif.dmem_addr		= aif0.out;
 		dpif.dmem_width 	= decif0.dmem_cmd.dmem_width;
 		LDST_Addr_Misalign_Checker(.width(dpif.dmem_width),
@@ -169,63 +167,30 @@ module datapath #(
 		pcif0.branch_addr 		= brif0.next_addr;
 		pcif0.branch_addr_en	= brif0.next_addr_en;
 
-		// Byte enable signals
-		casez (decif0.dmem_cmd.dmem_width[1:0])
-			2'b00: byteen = 4'b1 << dpif.dmem_addr[1:0];
-			2'b01: byteen = 4'b11 << {dpif.dmem_addr[1], 1'b0};
-			2'b10: byteen = 4'b1111;
-			// TODO Raise illegal instruction here?
-			default: byteen = 4'b1111;
-		endcase
-
-		// Store value shifter, since store will store
-		// the lower bits, we will need to shift them according
-		// to the byte enable signals
-		casez (byteen)
-			4'b0001: dpif.dmem_store = rfif0.rdat2;
-			4'b0010: dpif.dmem_store = rfif0.rdat2 << 8;
-			4'b0100: dpif.dmem_store = rfif0.rdat2 << 16;
-			4'b1000: dpif.dmem_store = rfif0.rdat2 << 24;
-
-			4'b0011: dpif.dmem_store = rfif0.rdat2;
-			4'b1100: dpif.dmem_store = rfif0.rdat2 << 16;
-
-			4'b1111: dpif.dmem_store = rfif0.rdat2;
-			default: dpif.dmem_store = rfif0.rdat2;
-		endcase
-
 		// Load value extender
 		if (decif0.dmem_cmd.dmem_load_unsigned == 1'b1) begin
 			// Unsigned type (logic) will be pad with 0s
-			casez (byteen)
+			casez (decif0.dmem_cmd.dmem_width[1:0])
 				// Byte load
-				4'b0001: ext_load = dpif.dmem_load[7:0]; 
-				4'b0010: ext_load = dpif.dmem_load[15:8]; 
-				4'b0100: ext_load = dpif.dmem_load[23:16]; 
-				4'b1000: ext_load = dpif.dmem_load[31:24]; 
+				2'b00: ext_load = dpif.dmem_load[7:0]; 
 				// Half word load
-				4'b0011: ext_load = dpif.dmem_load[15:0]; 
-				4'b1100: ext_load = dpif.dmem_load[31:16]; 
+				2'b01: ext_load = dpif.dmem_load[15:0]; 
 				// Full word load
-				4'b1111: ext_load = dpif.dmem_load; 
-				// Invalid byteen, but will never happen
+				2'b10: ext_load = dpif.dmem_load; 
+				// Invalid width, should raise illegal inst?
 				default: ext_load = dpif.dmem_load; 
 			endcase
 		end
 		else begin
 			// Casting from signed will pad with signed bit
-			casez (byteen)
+			casez (decif0.dmem_cmd.dmem_width[1:0])
 				// Byte load
-				4'b0001: ext_load = signed'(dpif.dmem_load[7:0]);
-				4'b0010: ext_load = signed'(dpif.dmem_load[15:8]);
-				4'b0100: ext_load = signed'(dpif.dmem_load[23:16]);
-				4'b1000: ext_load = signed'(dpif.dmem_load[31:24]);
+				2'b00: ext_load = signed'(dpif.dmem_load[7:0]);
 				// Half word load
-				4'b0011: ext_load = signed'(dpif.dmem_load[15:0]);
-				4'b1100: ext_load = signed'(dpif.dmem_load[31:16]);
+				2'b01: ext_load = signed'(dpif.dmem_load[15:0]);
 				// Full word load
-				4'b1111: ext_load = signed'(dpif.dmem_load);
-				// Invalid byteen, but will never happen
+				2'b10: ext_load = signed'(dpif.dmem_load);
+				// Invalid width, should raise illegal inst?
 				default: ext_load = signed'(dpif.dmem_load);
 			endcase
 		end

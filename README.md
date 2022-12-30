@@ -12,6 +12,7 @@ Mini-Bus is a simple bus protocol used to connect the CPU core with other compon
 - `nrst`: bus reset
 - `addr`: bus address signals, 32-bit
 - `wdata`: bus write data signals, 32-bit
+  - Always right-aligned for storing byte or half-word
 - `rdata`: bus read data signals, 32-bit
 - `width`: bus data width, 2-bit
   - `00`: byte access

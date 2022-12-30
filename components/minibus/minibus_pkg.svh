@@ -37,6 +37,9 @@ package minibus_pkg;
         logic   ack;
         logic   err;
     } minibus_res_pack;
+
+    // TODO Define this later and resolve the multiple word_t definitions error
+    // typedef logic [DATA_WIDTH - 1:0] word_t;
 endpackage
 
 `endif // __MINIBUS_PKG_VH__
