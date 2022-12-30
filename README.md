@@ -1,6 +1,6 @@
 # CPU-X
 
-A RISC-V RV32IMA+Zicsr FPGA implementation.
+A RISC-V RV32I+Zicsr FPGA implementation.
 
 ## Mini-Bus protocol
 
@@ -266,6 +266,11 @@ Using [Wavedrom](https://github.com/wavedrom/wavedrom) for visualization.
 2. [ ] Make sure the exception/interrupt are precise
 3. [ ] Group interface signals into event packet struct, like instruction fetch, memory_ldst
 
+### Stage II.a: M- and A- extensions support
+
+1. [ ] Add `M-` extension
+2. [ ] Add `A-` extension
+
 ### Stage III: Peripheral
 
 1. [ ] Implement a memory bus to connect on-chip and off-chip RAM/ROM
@@ -280,6 +285,7 @@ Using [Wavedrom](https://github.com/wavedrom/wavedrom) for visualization.
 
 1. RISC-V Testsuite
    1. Use `make benchmark_BENCHMARK` or `make isa_ISATEST` to generate the `meminit.hex`
+   2. Use `make own_PROG` to compile programs inside `prog` folder
 
 ## References
 
