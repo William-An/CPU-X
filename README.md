@@ -39,139 +39,19 @@ Using [Wavedrom](https://github.com/wavedrom/wavedrom) for visualization.
 #### Mini-Bus Write
 
 <div style="background-color: #EBEBEB">
-<script type="WaveDrom">
-{signal: [
-    ["Note",
-     {name: 'Title',		wave: "7................", data:["Mini-Bus master write to two slave devices"]},
-     {name: '',			wave: "3..4.5......2....", data:["Waiting nRST", "Write to S1", "Write to S2", "Free"]},
-     {name: 'Bus-phase',	wave: '2..343.....42....', data:['unknown', 'addr', 'data', 'addr', 'data', 'free']},
-     {},
-    ],
-    ["Global",
-      {name: 'clk', 		wave: 'P................'},
-      {name: 'nrst', 		wave: '101..............'},
-    ],
-    ["Master",
-      {name: 'addr', 		wave: 'x..3.3......x....', data:['addr1', 'addr2']},
-      {name: 'wdata', 	wave: 'x..4.4......x....', data: ['data1', 'data2']},
-      {name: 'rdata', 	wave: 'x................', data: []},
-      {name: 'ren', 		wave: '0................'},
-      {name: 'wen', 		wave: '0..1.1......0....'},
-      {name: 'ack', 		wave: '0...10.....10....'},
-    ],
-     ["Slave1",
-      {name: 'sel1', 		wave: '0..1.0...........'},
-      {name: 'addr', 		wave: 'x..3.3......x....', data:['addr1', 'addr2']},
-      {name: 'wdata', 	wave: 'x..4.4......x....', data: ['data1', 'data2']},
-      {name: 'rdata1', 	wave: 'x................', data: []},
-      {name: 'ren', 		wave: '0................'},
-      {name: 'wen', 		wave: '0..1.1......0....'},
-      {name: 'ack1', 		wave: '0...10...........'},
-    ],
-     ["Slave2",
-      {name: 'sel2', 		wave: '0....1......0....'},
-      {name: 'addr', 		wave: 'x..3.3......x....', data:['addr1', 'addr2']},
-      {name: 'wdata', 	wave: 'x..4.4......x....', data: ['data1', 'data2']},
-      {name: 'rdata2', 	wave: 'x................', data: []},
-      {name: 'ren', 		wave: '0................'},
-      {name: 'wen', 		wave: '0..1.1......0....'},
-      {name: 'ack2', 		wave: '0..........10....'},
-    ]
-  ]}
-</script>
+<img src="https://svg.wavedrom.com/github/William-An/CPU-X/main/docs/mini-bus-write-waveform.json5"/>
 </div>
 
 #### Mini-Bus Read
 
 <div style="background-color: #EBEBEB">
-<script type="WaveDrom">
-{signal: [
-    ["Note",
-     {name: 'Title',		wave: "7................", data: ["Mini-Bus master read from two slave devices"]},
-     {name: '',			wave: "3..4.5......2....", data: ["Waiting nRST", "Read S1", "Read S2", "Free"]},
-     {name: 'Bus-phase',	wave: '2..343.....42....', data: ['unknown', 'addr', 'data', 'addr', 'data', 'free']},
-     {},
-    ],
-    ["Global",
-      {name: 'clk', 		wave: 'P................'},
-      {name: 'nrst', 		wave: '101..............'},
-    ],
-    ["Master",
-      {name: 'addr', 		wave: 'x..3.3......x....', data: ['addr1', 'addr2']},
-      {name: 'wdata', 	wave: 'x................', data: []},
-      {name: 'rdata', 	wave: 'x...4x.....4x....', data: ['data1', 'data2']},
-      {name: 'ren', 		wave: '0..1.1......0....'},
-      {name: 'wen', 		wave: '0................'},
-      {name: 'ack', 		wave: '0...10.....10....'},
-    ],
-     ["Slave1",
-      {name: 'sel1', 		wave: '0..1.0...........'},
-      {name: 'addr', 		wave: 'x..3.3......x....', data: ['addr1', 'addr2']},
-      {name: 'wdata', 	wave: 'x................', data: []},
-      {name: 'rdata1', 	wave: 'x...4x...........', data: ['data1']},
-      {name: 'ren', 		wave: '0..1.1......0....'},
-      {name: 'wen', 		wave: '0................'},
-      {name: 'ack1', 		wave: '0...10...........'},
-    ],
-     ["Slave2",
-      {name: 'sel2', 		wave: '0....1......0....'},
-      {name: 'addr', 		wave: 'x..3.3......x....', data:['addr1', 'addr2']},
-      {name: 'wdata', 	wave: 'x................', data: []},
-      {name: 'rdata2', 	wave: 'x..........4x....', data: ['data2']},
-      {name: 'ren', 		wave: '0..1.1......0....'},
-      {name: 'wen', 		wave: '0................'},
-      {name: 'ack2', 		wave: '0..........10....'},
-    ]
-  ]}
-</script>
+<img src="https://svg.wavedrom.com/github/William-An/CPU-X/main/docs/mini-bus-read-waveform.json5"/>
 </div>
 
 #### Mini-Bus read and write
 
 <div style="background-color: #EBEBEB">
-<script type="WaveDrom">
-{signal: [
-  ["Note",
-   {name: 'Title',		wave: "7...........................", data: ["Mini-Bus master read and write with two slave devices"]},
-   {name: '',			wave: "3..4.5......2.5....23..2....", data: ["Waiting nRST", "Read S1", "Write S2", "Free", "Write S1", "Free", "Read S2", "Free"]},
-   {name: 'Bus-phase',	wave: '2..343.....42.3...423.42....', data: ['unknown', 'addr', 'data', 'addr', 'data', 'free', 'addr', 'data', 'free', 'addr', 'data', 'free']},
-   {},
-  ],
-  ["Global",
-    {name: 'clk', 		wave: 'P...........................'},
-    {name: 'nrst', 		wave: '101.........................'},
-  ],
-  ["Master",
-    {name: 'addr', 		wave: 'x..3.3......x.3....x3..x....', data: ['addr1', 'addr2', 'addr3', 'addr4']},
-    {name: 'wdata', 	wave: 'x....4......x.4....x........', data: ['data2', 'data3']},
-    {name: 'rdata', 	wave: 'x...4x................4x....', data: ['data1', 'data4']},
-    {name: 'width', 	wave: 'x..5.5......x.5....x5..x....', data: ['width1', 'width2', 'width3', 'width4']},
-    {name: 'ren', 		wave: '0..1.0..............1..0....'},
-    {name: 'wen', 		wave: '0....1......0.1....0........'},
-    {name: 'ack', 		wave: '0...10.....10.....10..10....'},
-  ],
-   ["Slave1",
-    {name: 'sel1', 		wave: '0..1.0........1....0........'},
-    {name: 'addr', 		wave: 'x..3.3......x.3....x3..x....', data: ['addr1', 'addr2', 'addr3', 'addr4']},
-    {name: 'wdata', 	wave: 'x....4......x.4....x........', data: ['data2', 'data3']},
-    {name: 'rdata1', 	wave: 'x...4x......................', data: ['data1']},
-    {name: 'width', 	wave: 'x..5.5......x.5....x5..x....', data: ['width1', 'width2', 'width3', 'width4']},
-    {name: 'ren', 		wave: '0..1.0..............1..0....'},
-    {name: 'wen', 		wave: '0....1......0.1....0........'},
-    {name: 'ack1', 		wave: '0...10............10........'},
-  ],
-   ["Slave2",
-    {name: 'sel2', 		wave: '0....1......0.......1..0....'},
-    {name: 'addr', 		wave: 'x..3.3......x.3....x3..x....', data: ['addr1', 'addr2', 'addr3', 'addr4']},
-    {name: 'wdata', 	wave: 'x....4......x.4....x........', data: ['data2', 'data3']},
-    {name: 'rdata2', 	wave: 'x.....................4x....', data: ['data4']},
-   	{name: 'width', 	wave: 'x..5.5......x.5....x5..x....', data: ['width1', 'width2', 'width3', 'width4']},
-    {name: 'ren', 		wave: '0..1.0..............1..0....'},
-    {name: 'wen', 		wave: '0....1......0.1....0........'},
-    {name: 'ack2', 		wave: '0..........10.........10....'},
-  ]
-]}
-</script>
+<img src="https://svg.wavedrom.com/github/William-An/CPU-X/main/docs/mini-bus-read-write-waveform.json5"/>
 </div>
 
 ## TODO
@@ -297,9 +177,3 @@ Using [Wavedrom](https://github.com/wavedrom/wavedrom) for visualization.
 4. [Intel Quartus Lite](https://www.intel.com/content/www/us/en/software-kit/684215/intel-quartus-prime-lite-edition-design-software-version-21-1-for-linux.html)
    1. For linux
    2. Also if want to use the waveform simulator, need to register for a license
-
-
-<!-- Waveform render scripts -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/wavedrom/2.6.8/skins/default.js" type="text/javascript"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/wavedrom/2.6.8/wavedrom.min.js" type="text/javascript"></script>
-<body onload="WaveDrom.ProcessAll()">
