@@ -53,7 +53,7 @@ isa_%: $(UNIT_TEST_DIR)/%
 
 # Own RISCV programs
 own_%:
-	$(MAKE) -C $(OWN_PROG_DIR) $*.riscv
+	$(MAKE) -C $(OWN_PROG_DIR) $*.hex
 	@cp $(OWN_PROG_DIR)/$*.hex $(HEX_INIT_FILE)
 
 # Build project

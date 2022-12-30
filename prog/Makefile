@@ -4,7 +4,7 @@ SHELL := bash
 
 # Compiler and objdump flags
 RISCV_PREFIX := riscv64-unknown-elf-
-RISCV_CFLAGS := -march=rv32i -mabi=ilp32 -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles 
+RISCV_CFLAGS := -march=rv32i -mabi=ilp32 -static -mcmodel=medany -fvisibility=hidden -nostartfiles 
 RISCV_OBJDUMP_FLAGS := -Mno-aliases -Mnumeric --disassemble-all --disassemble-zeroes --section=.text --section=.text.startup --section=.text.init --section=.data --section=.tohost
 OBJCOPY_FLAGS		:= --only-section=.text --only-section=.text.startup --only-section=.text.init \
 					   --only-section=.data -v --set-start 0x00 --reverse-bytes=4 -O ihex
