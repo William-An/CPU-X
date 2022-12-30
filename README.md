@@ -1,5 +1,7 @@
 # CPU-X
 
+[![wakatime](https://wakatime.com/badge/user/b8ccd381-59c8-4b8b-8a80-7f93d4fd2d03/project/2e5364bf-f6cc-41c4-8a2f-6bccabc19451.svg)](https://wakatime.com/badge/user/b8ccd381-59c8-4b8b-8a80-7f93d4fd2d03/project/2e5364bf-f6cc-41c4-8a2f-6bccabc19451)
+
 A RISC-V RV32I+Zicsr FPGA implementation.
 
 ## Mini-Bus protocol
